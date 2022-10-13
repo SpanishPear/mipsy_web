@@ -1,0 +1,10 @@
+[package]
+name = "mipsy_web"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+yew = "0.19.3"
+yew-agent = "0.1.0"
+serde = { version = "1.0.145", features = ["derive"] }
+stylist = { version = "0.10.1", features = ["yew_integration"] }

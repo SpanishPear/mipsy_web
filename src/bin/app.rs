@@ -1,3 +1,4 @@
+use mipsy_web::editor::component::Editor;
 use stylist::yew::*;
 use yew::prelude::*;
 
@@ -6,6 +7,7 @@ fn app() -> Html {
     html! {
         <div>
             <h1>{"Hello, world!"}</h1>
+            <Editor />
         </div>
     }
 }

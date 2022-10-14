@@ -308,6 +308,7 @@ version = "0.1.0"
 dependencies = [
  "anyhow",
  "indexed_db_futures",
+ "monaco",
  "serde",
  "stylist",
  "wasm-bindgen",
@@ -315,6 +316,18 @@ dependencies = [
  "web-sys",
  "yew",
  "yew-agent",
+]
+
+[[package]]
+name = "monaco"
+version = "0.3.0"
+source = "git+https://github.com/siku2/rust-monaco#5684979fd326c875d6ee57306b243219fc38ff46"
+dependencies = [
+ "js-sys",
+ "paste",
+ "wasm-bindgen",
+ "web-sys",
+ "yew",
 ]
 
 [[package]]
@@ -332,6 +345,12 @@ name = "once_cell"
 version = "1.15.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "e82dad04139b71a90c080c8463fe0dc7902db5192d939bd0950f074d014339e1"
+
+[[package]]
+name = "paste"
+version = "1.0.9"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "b1de2e551fb905ac83f73f7aedf2f0cb4a0da7e35efa24a202a936269f1f18e1"
 
 [[package]]
 name = "proc-macro-error"

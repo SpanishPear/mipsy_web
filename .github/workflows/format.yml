@@ -24,6 +24,9 @@ jobs:
           override: true
           profile: minimal
           components: rustfmt
-      - name: rust-rustfmt-check
+
+      - name: RustFormat 
         uses: mbrobbel/rustfmt-check@0.3.0
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
 

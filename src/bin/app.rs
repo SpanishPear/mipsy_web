@@ -1,5 +1,5 @@
-use yew::prelude::*;
 use stylist::yew::*;
+use yew::prelude::*;
 
 #[styled_component(App)]
 fn app() -> Html {

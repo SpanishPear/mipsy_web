@@ -33,3 +33,4 @@ jobs:
         publish_branch: gh-pages
         publish_dir: ./dist
         force_orphan: true
+        cname: spanishpe.ar

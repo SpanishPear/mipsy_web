@@ -22,7 +22,6 @@ jobs:
       uses: jetli/trunk-action@v0.1.0
 
     - name: run trunk
-      working-directory: ./crates/website/
       run: trunk build --release
 
     - name: GitHub Pages action

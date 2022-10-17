@@ -1,24 +1,30 @@
 use serde::{Deserialize, Serialize};
 use yew_agent::{Agent, AgentLink, HandlerId, Public};
 
+/// A struct containing
+/// state for the Worker
 pub struct Worker {
     link: AgentLink<Self>,
 }
 
+/// The type that a worker
+/// can receive
 #[derive(Serialize, Deserialize)]
-pub struct WorkerInput {
-    pub n: u32,
+pub enum ToWorker {
+    Ping,
 }
 
-#[derive(Serialize, Deserialize)]
-pub struct WorkerOutput {
-    pub value: u32,
+/// The type that a Worker
+/// can send back
+#[derive(Serialize, Deserialize, Debug)]
+pub enum FromWorker {
+    Pong(String),
 }
 
 impl Agent for Worker {
-    type Input = WorkerInput;
+    type Input = ToWorker;
     type Message = ();
-    type Output = WorkerOutput;
+    type Output = FromWorker;
     type Reach = Public<Self>;
 
     fn create(link: AgentLink<Self>) -> Self {
@@ -34,22 +40,16 @@ impl Agent for Worker {
         // and does not block the main
         // browser thread!
 
-        let n = msg.n;
-
-        fn fib(n: u32) -> u32 {
-            if n <= 1 {
-                1
-            } else {
-                fib(n - 1) + fib(n - 2)
-            }
-        }
-
-        let output = Self::Output { value: fib(n) };
+        let output = Self::Output::Pong("hello from worker".to_string());
 
         self.link.respond(id, output);
     }
 
     fn name_of_resource() -> &'static str {
         "worker.js"
+    }
+
+    fn resource_path_is_relative() -> bool {
+        true
     }
 }

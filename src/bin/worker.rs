@@ -1,7 +1,9 @@
-use mipsy_web::agent::Worker;
-use yew_agent::Threaded;
+use gloo_worker::Registrable;
+use mipsy_web::agent::MipsyWebWorker;
 
 fn main() {
-    wasm_logger::init(wasm_logger::Config::default());
-    Worker::register();
+    //console_error_panic_hook::set_once();
+
+    //wasm_logger::init(wasm_logger::Config::default());
+    MipsyWebWorker::registrar().register();
 }

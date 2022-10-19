@@ -1,17 +1,20 @@
+use gloo_worker::{HandlerId, Worker, WorkerScope};
 use serde::{Deserialize, Serialize};
-use yew_agent::{Agent, AgentLink, HandlerId, Public};
 
 /// A struct containing
 /// state for the Worker
-pub struct Worker {
-    link: AgentLink<Self>,
-}
+pub struct MipsyWebWorker {}
 
 /// The type that a worker
 /// can receive
 #[derive(Serialize, Deserialize)]
 pub enum ToWorker {
     Ping,
+}
+
+/// Used for internal messaging
+pub enum Message {
+    Pong,
 }
 
 /// The type that a Worker
@@ -21,35 +24,25 @@ pub enum FromWorker {
     Pong(String),
 }
 
-impl Agent for Worker {
+impl Worker for MipsyWebWorker {
     type Input = ToWorker;
     type Message = ();
     type Output = FromWorker;
-    type Reach = Public<Self>;
 
-    fn create(link: AgentLink<Self>) -> Self {
-        Self { link }
+    fn create(scope: &WorkerScope<Self>) -> Self {
+        Self {}
     }
 
-    fn update(&mut self, _msg: Self::Message) {
+    fn update(&mut self, scope: &WorkerScope<Self>, msg: Self::Message) {
         // no messaging
     }
 
-    fn handle_input(&mut self, msg: Self::Input, id: HandlerId) {
+    fn received(&mut self, scope: &WorkerScope<Self>, msg: Self::Input, id: HandlerId) {
         // this runs in a web worker
         // and does not block the main
         // browser thread!
 
         let output = Self::Output::Pong("hello from worker".to_string());
-
-        self.link.respond(id, output);
-    }
-
-    fn name_of_resource() -> &'static str {
-        "worker.js"
-    }
-
-    fn resource_path_is_relative() -> bool {
-        true
+        scope.respond(id, output);
     }
 }

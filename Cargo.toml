@@ -17,3 +17,6 @@ monaco = { git = "https://github.com/siku2/rust-monaco", features = ["yew-compon
 wasm-logger = "0.2.0"
 bounce = "0.3.0"
 log = "0.4.17"
+gloo-worker = { version = "0.2.1", features = ["futures"] }
+wasm-bindgen-futures = "0.4.33"
+js-sys = "0.3.60"

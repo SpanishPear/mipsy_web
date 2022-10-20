@@ -1,9 +1,44 @@
 use crate::agent::MipsyWebWorker;
+use crate::components::layout::ResizableLayout;
 use gloo_worker::Spawnable;
 use js_sys::Promise;
+use stylist::css;
 use stylist::yew::styled_component;
 use wasm_bindgen_futures::{spawn_local, JsFuture};
 use yew::prelude::*;
+#[function_component(MenuContainer)]
+
+pub fn menu_container() -> Html {
+    html! {
+        <div class={css!(r#"
+            background-color: red;
+        "#)}>
+            {"menu"}
+        </div>
+    }
+}
+
+#[function_component(EditorContainer)]
+pub fn editor_container() -> Html {
+    html! {
+        <div class={css!(r#"
+            background-color: blue;
+        "#)}>
+            {"editor"}
+        </div>
+    }
+}
+
+#[function_component(RuntimeContainer)]
+pub fn runtime_container() -> Html {
+    html! {
+        <div class={css!(r#"
+            background-color: green;
+        "#)}>
+            {"runtime"}
+        </div>
+    }
+}
 
 #[styled_component(App)]
 pub fn app() -> Html {
@@ -25,11 +60,18 @@ pub fn app() -> Html {
 
     html! {
         <AppContainer>
-            //<ModeMenu/>
-            //<EditorArea />
-            // TODO: this will be renamed for sure
-            //<RegistersAndTerm />
-            <div> </div>
+            <ResizableLayout
+                menu_container={{ html_nested! {
+                    <MenuContainer />
+                }}}
+                editor_container={{ html_nested!{
+                    <EditorContainer />
+                }}}
+                runtime_container={{html_nested!{
+                    <RuntimeContainer />
+                }}}
+            >
+            </ResizableLayout>
         </AppContainer>
     }
 }
@@ -43,8 +85,10 @@ struct AppContainerProps {
 fn app_container(props: &AppContainerProps) -> Html {
     html! {
         <div class={css!(r#"
-            width: 100vw;
-            height: 100vh;
+            min-width: 100vw;
+            min-height: 100vh;
+            height: 100%;
+            width: 100%;
             background-color: pink;
         "#)}>
             {

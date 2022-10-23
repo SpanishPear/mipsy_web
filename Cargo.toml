@@ -6,7 +6,7 @@ edition = "2021"
 [dependencies]
 yew = "0.19.3"
 yew-agent = "0.1.0"
-serde = { version = "1.0.145", features = ["derive"] }
+serde = { version = "1.0", features = ["derive"] }
 stylist = { version = "0.10.1", features = ["yew_integration"] }
 indexed_db_futures = "0.2.3"
 anyhow = "1.0.65"

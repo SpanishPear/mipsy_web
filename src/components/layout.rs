@@ -27,21 +27,21 @@ pub fn resizable_layout(props: &ResizableLayoutProps) -> Html {
                 <div class={css!(r#"
                     border: 1px solid black;
                     min-width: 100px;
-                "#)}>
+                "#)} id="left">
                     {props.menu_container.clone()}
                 </div>
 
                 <div class={css!(r#"
                     border: 1px solid black;
                     flex-grow: 1;
-                "#)}>
+                "#)} id="middle">
                     {props.editor_container.clone()}
                 </div>
 
                 <div class={css!(r#"
                     border: 1px solid black;
                     min-width: 100px;
-                "#)}>
+                "#)} id="right">
                     {props.runtime_container.clone()}
                 </div>
             </div>

@@ -2,12 +2,22 @@
 #![allow(clippy::let_unit_value)]
 
 use bounce::BounceRoot;
-use mipsy_web::components::app::App;
+use mipsy_web::{
+    setup_splits,
+    components::app::App
+};
 use stylist::yew::*;
 use yew::prelude::*;
 
 #[styled_component(AppRoot)]
 fn app() -> Html {
+
+    use_effect(|| {
+        setup_splits(); 
+        
+        || ()
+    });
+
     html! {
         <BounceRoot>
             <App />
@@ -16,6 +26,6 @@ fn app() -> Html {
 }
 
 fn main() {
-    yew::start_app::<AppRoot>();
     wasm_logger::init(wasm_logger::Config::default());
+    yew::start_app::<AppRoot>();
 }

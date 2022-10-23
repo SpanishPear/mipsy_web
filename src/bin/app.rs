@@ -2,19 +2,15 @@
 #![allow(clippy::let_unit_value)]
 
 use bounce::BounceRoot;
-use mipsy_web::{
-    setup_splits,
-    components::app::App
-};
+use mipsy_web::{components::app::App, setup_splits};
 use stylist::yew::*;
 use yew::prelude::*;
 
 #[styled_component(AppRoot)]
 fn app() -> Html {
-
     use_effect(|| {
-        setup_splits(); 
-        
+        setup_splits();
+
         || ()
     });
 

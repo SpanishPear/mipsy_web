@@ -5,6 +5,7 @@ pub mod indexdb_fs;
 use js_sys::{Object, Reflect};
 use wasm_bindgen::prelude::*;
 
+//TODO: create a SplitJs rust binding
 #[wasm_bindgen]
 extern "C" {
     /// Documentation at https://github.com/nathancahill/split/tree/master/packages/splitjs
@@ -16,7 +17,7 @@ impl From<SplitElements> for js_sys::Array {
     fn from(v: SplitElements) -> Self {
         v.0.into_iter()
             .map(|s| s.to_string())
-            .map(|s| JsValue::from(s))
+            .map(JsValue::from)
             .collect()
     }
 }
@@ -25,6 +26,8 @@ pub fn setup_splits() -> JsValue {
     // Initialize split panes
     let split_elements = SplitElements(vec!["#left", "#middle", "#right"]);
 
+    // set the options
+    // starter percents of 5, 90, 5
     let options: Object = js_sys::Object::new();
     Reflect::set(
         &options,
@@ -35,10 +38,10 @@ pub fn setup_splits() -> JsValue {
             &JsValue::from(5_f64),
         )),
     )
-    .expect("Reflection failed");
+    .expect("Creating options via reflection failed");
 
+    // TODO: move to tracing
     log::info!("options: {:?}", options);
 
-    // convert a raw string into a js object
     Split(split_elements.into(), options)
 }

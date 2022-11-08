@@ -4,10 +4,16 @@
     <meta charset="utf-8">
         <title>Mipsy</title>
         <meta name="description" content="Mipsy">
+
+		<!-- our wasm files -->
         <link data-trunk rel="rust" href="Cargo.toml" data-bin="app" data-type="main" />
         <link data-trunk rel="rust" href="Cargo.toml" data-bin="worker" data-type="worker" />
+
+		<!-- split.js for the drag and drop areas -->
+		<link data-trunk rel="inline" type="js" href="assets/split.js"/>
+
+		<!-- assorted css that isn't built into the wasm -->
         <link data-trunk rel="css" href="assets/index.css" />
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/split.js/1.6.0/split.min.js"></script>
     </head>
     <body>
     </body>

@@ -8,11 +8,16 @@ use yew::prelude::*;
 
 #[styled_component(AppRoot)]
 fn app() -> Html {
-    use_effect(|| {
-        setup_splits();
+    // on the first render, run the javascript
+    // that enables panes to resize
+    use_effect_with_deps(
+        |_| {
+            setup_splits();
 
-        || ()
-    });
+            || ()
+        },
+        (),
+    );
 
     html! {
         <BounceRoot>

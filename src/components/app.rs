@@ -1,17 +1,19 @@
 use crate::agent::MipsyWebWorker;
-use crate::components::layout::ResizableLayout;
+use crate::{components::layout::ResizableLayout, editor::component::Editor};
 use gloo_worker::Spawnable;
 use js_sys::Promise;
 use stylist::css;
 use stylist::yew::styled_component;
 use wasm_bindgen_futures::{spawn_local, JsFuture};
 use yew::prelude::*;
-#[function_component(MenuContainer)]
 
+#[function_component(MenuContainer)]
 pub fn menu_container() -> Html {
     html! {
         <div class={css!(r#"
             background-color: red;
+            width: 100%;
+            height: 100%;
         "#)}>
             {"menu"}
         </div>
@@ -20,11 +22,13 @@ pub fn menu_container() -> Html {
 
 #[function_component(EditorContainer)]
 pub fn editor_container() -> Html {
+    let styles: String = "width: 100%; height: 100%;".into();
     html! {
         <div class={css!(r#"
-            background-color: blue;
+            width: 100%;
+            height: 100%;
         "#)}>
-            {"editor"}
+            <Editor {styles}/>
         </div>
     }
 }

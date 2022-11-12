@@ -1,7 +1,5 @@
 use crate::editor::get_options;
-use monaco::api::TextModel;
-use monaco::sys::Uri;
-use monaco::yew::CodeEditor;
+use monaco::yew::{CodeEditor, CodeEditorLink};
 use stylist::yew::styled_component;
 use stylist::StyleSource;
 use yew::prelude::*;
@@ -11,83 +9,90 @@ pub struct EditorProps {
     pub styles: String,
 }
 
+#[derive(Debug, Clone, PartialEq, Eq)]
+pub struct TabName(String);
+
 #[styled_component(Editor)]
 pub fn editor(EditorProps { styles }: &EditorProps) -> Html {
     let styles: StyleSource = styles.as_str().into();
-    let models: UseStateHandle<Vec<String>> = use_state(Vec::new);
-    let current_model: UseStateHandle<String> = use_state(|| {
-        let uri = TextModel::create("test", "mips".into(), None)
-            .unwrap()
-            .uri()
-            .to_string(false);
 
-        // add the model to the models hash_map
-        let mut models_vec = (*models).clone();
-        models_vec.push(uri.clone());
-        models.set(models_vec);
+    let link: UseStateHandle<CodeEditorLink> = use_state(CodeEditorLink::default);
 
-        uri
-    });
-    log::info!("models: {:?}", models);
-    let button_onclick2: Callback<MouseEvent> = {
-        // get the second uri in the vec, if it exists
-        // if it doesn't exist, create a new model 
-        let models = models.clone();
-        let current_model = current_model.clone();
-        Callback::from(move |_| {
-       
-            log::info!("button clicked");
-            let mut models_vec = (*models).clone();
-            let uri = if let Some(uri) = models_vec.get(1) {
-                uri.clone()
-            } else {
-                let uri = TextModel::create("TAB 2", "mips".into(), None)
-                    .unwrap()
-                    .uri()
-                    .to_string(false);
-                models_vec.push(uri.clone());
-                models.set(models_vec);
-                uri
-            };
-            
-            current_model.set(uri);
-        })
-    };
-
-    let button_onclick: Callback<MouseEvent> = {
-        let models = models.clone();
-        let current_model = current_model.clone();
-        Callback::from(move |_| {
-       
-            log::info!("button clicked");
-            let mut models_vec = (*models).clone();
-            let uri = if let Some(uri) = models_vec.get(0) {
-                uri.clone()
-            } else {
-                let uri = TextModel::create("TAB 1", "mips".into(), None)
-                    .unwrap()
-                    .uri()
-                    .to_string(false);
-                models_vec.push(uri.clone());
-                models.set(models_vec);
-                uri
-            };
-            
-            current_model.set(uri);
-        })
-    };
-
-    let current_uri: Uri = Uri::parse(&(*current_model), false);
-    let model = TextModel::get(&current_uri).unwrap();
     html! {
         <>
-            <button onclick={button_onclick}>{"Tab 1"}</button>
-            <button onclick={button_onclick2}>{"Tab 2"}</button>
+            <Tabs link={link.clone()} />
             <CodeEditor
                 classes={styles}
                 options={get_options()}
-                model={model}
+                link={(*link).clone()}
             />
         </>
+    }
+}
+
+#[derive(Properties, PartialEq)]
+pub struct TabProps {
+    pub link: UseStateHandle<CodeEditorLink>,
+}
+
+// TODO - make this a styled component, in a separate file
+#[function_component(Tabs)]
+pub fn tabs(TabProps { link }: &TabProps) -> Html {
+    // get a vec of all model paths
+    let all_tabs = monaco::api::TextModel::get_all()
+        .into_iter()
+        .map(|model| model.uri().path());
+
+    let current_tab: UseStateHandle<Option<String>> = use_state(|| None);
+
+    // after the first render, get the current tab
+    {
+        let current_tab = current_tab.clone();
+        let link = link.clone();
+        use_effect(move || {
+            let maybe_tabname = (*link).with_editor(|editor| {
+                editor
+                    .get_model()
+                    .expect("There should always be one tab focused")
+                    .uri()
+                    .path()
+            });
+
+            if let Some(current_tab_name) = maybe_tabname {
+                if *current_tab == None {
+                    current_tab.set(Some(current_tab_name));
+                }
+            }
+
+            || ()
+        });
+    }
+
+    // loop through all tabs, and render a tab for each one
+    // add the selected class to the tab that is currently selected
+    // TODO: tab close button
+    // TODO: tab middle click to close
+    // TODO(stretch): tab drag and drop to reorder
+    // TODO: tab onclick to focus
+    // TODO: if the filename is not already open, show filename, else show full path
+    // TODO: if the filename is too long, truncate it
+    // TODO: the above TODO's should be done in a Tab component
+    html! {
+        {
+            for all_tabs.into_iter().map(|display_name| {
+                if let Some(current_tab_name) = &*current_tab
+                    && current_tab_name == &display_name {
+
+                    html! {
+                        <div class="tab selected">{display_name}</div>
+                    }
+
+                } else {
+                    html! {
+                        <div class="tab">{display_name}</div>
+                    }
+                }
+            })
+        }
     }
 }

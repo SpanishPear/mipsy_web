@@ -38,12 +38,12 @@ pub fn tabs() -> Html {
 
     // loop through all tabs, and render a tab for each one
     // add the selected class to the tab that is currently selected
-    // TODO: tab close button
-    // TODO: tab middle click to close
+    // TODO(tabs): tab close button
+    // TODO(tabs): tab middle click to close
     // TODO(stretch): tab drag and drop to reorder
-    // TODO: tab onclick to focus
-    // TODO: if the filename is not already open, show filename, else show full path
-    // TODO: if the filename is too long, truncate it
+    // TODO(tabs): tab onclick to focus
+    // TODO(tabs): if the filename is not already open, show filename, else show full path
+    // TODO(tabs): if the filename is too long, truncate it
 
     html! {
         <ContextProvider<Vec<String>> context={all_tabs.clone().collect::<Vec<String>>()}>

@@ -27,8 +27,6 @@ pub struct StyledTabProps {
 
 #[styled_component(StyledTab)]
 pub fn styled_tab(StyledTabProps { selected, children }: &StyledTabProps) -> Html {
-    // TODO(style): - if selected have no bottom border
-    // TODO(style): - if selected have 1e1e1e background
     html! {
         <li
             style={ if *selected { "color: #fff; background-color: #1e1e1e; border-bottom: none;" } else { "" } }
@@ -51,8 +49,6 @@ pub fn styled_tab(StyledTabProps { selected, children }: &StyledTabProps) -> Htm
 
             {   for children.iter() }
             <span
-                //TODO(tabs): - onclick to clsoe the monaco tab
-
                 class={css!(r#"
                     float: right;
                     cursor: pointer;
@@ -65,8 +61,6 @@ pub fn styled_tab(StyledTabProps { selected, children }: &StyledTabProps) -> Htm
                     }
                 "#)}
             >
-                //TODO: onclick to close tab
-                //Q) what if the last tab is closed?
                 {"✕"}
             </span>
         </li>

@@ -22,7 +22,7 @@ pub fn menu_container() -> Html {
 
 #[function_component(EditorContainer)]
 pub fn editor_container() -> Html {
-    let styles: String = "width: 100%; height: 100%;".into();
+    let styles: String = "width: 100%; height: 100%; max-height: 90vh;".into();
     html! {
         <div class={css!(r#"
             width: 100%;

@@ -32,7 +32,6 @@ pub fn resizable_layout(props: &ResizableLayoutProps) -> Html {
                 </div>
 
                 <div class={css!(r#"
-                    border: 1px solid black;
                     flex-grow: 1;
                 "#)} id="middle">
                     {props.editor_container.clone()}

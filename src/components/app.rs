@@ -1,5 +1,8 @@
 use crate::agent::MipsyWebWorker;
-use crate::{components::layout::ResizableLayout, editor::component::Editor};
+use crate::{
+    components::{layout::ResizableLayout, menubar::MenuBar},
+    editor::component::Editor,
+};
 use gloo_worker::Spawnable;
 use js_sys::Promise;
 use stylist::css;
@@ -71,11 +74,10 @@ fn app_container(props: &AppContainerProps) -> Html {
 pub fn menu_container() -> Html {
     html! {
         <div class={css!(r#"
-            background-color: red;
             width: 100%;
             height: 100%;
         "#)}>
-            {"menu"}
+           <MenuBar />
         </div>
     }
 }

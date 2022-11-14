@@ -1,4 +1,3 @@
-#![feature(let_chains)]
 pub mod agent;
 pub mod components;
 pub mod editor;

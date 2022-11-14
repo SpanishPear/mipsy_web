@@ -3,6 +3,7 @@ pub mod agent;
 pub mod components;
 pub mod editor;
 pub mod indexdb_fs;
+pub mod state;
 use js_sys::{Object, Reflect};
 use wasm_bindgen::prelude::*;
 

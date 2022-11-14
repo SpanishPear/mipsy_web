@@ -1,16 +1,48 @@
 use crate::components::tab::Tab;
+use bounce::prelude::*;
 use monaco::yew::CodeEditorLink;
 use stylist::yew::styled_component;
 use yew::prelude::*;
+
+/// A container for tab details
+#[derive(Clone, Debug, PartialEq)]
+pub struct TabDetails {
+    /// The tab's uri
+    uri: String,
+    /// The full path to the file
+    /// showing full_path or just name
+    /// is handled by the Tab component
+    display_name: String,
+}
+
+#[derive(Atom, Debug, Clone, PartialEq)]
+struct TabDetailsList {
+    pub inner: Vec<TabDetails>,
+}
+
+impl Default for TabDetailsList {
+    fn default() -> Self {
+        let all_tabs = monaco::api::TextModel::get_all().into_iter().map(|model| {
+            let display_name = model.uri().path().to_string();
+
+            TabDetails {
+                uri: model.uri().to_string(false),
+                display_name,
+            }
+        });
+
+        Self {
+            inner: all_tabs.collect(),
+        }
+    }
+}
 
 #[styled_component(TabContainer)]
 pub fn tabs() -> Html {
     let link = use_context::<CodeEditorLink>().expect("should have a link");
     // get a vec of all model paths
-    let all_tabs = monaco::api::TextModel::get_all()
-        .into_iter()
-        .map(|model| model.uri().path());
 
+    let all_tabs = &use_atom::<TabDetailsList>().inner;
     let current_tab: UseStateHandle<Option<String>> = use_state(|| None);
 
     // after the first render, get the current tab
@@ -46,17 +78,16 @@ pub fn tabs() -> Html {
     // TODO(tabs): if the filename is too long, truncate it
     // TODO(tabs): save and restore scroll position, cursor (editor.restoreViewState)
     html! {
-        <ContextProvider<Vec<String>> context={all_tabs.clone().collect::<Vec<String>>()}>
-            <StyledTabContainer>
-                {
-                    for ["test", "/1", "tabs", "things", "there"].into_iter().map(|uri| {
-                        html! {
-                            <Tab uri={uri} selected={(*current_tab).clone()} />
-                        }
-                    })
-                }
-            </StyledTabContainer>
-        </ContextProvider<Vec<String>>>
+        <StyledTabContainer>
+            {
+                for all_tabs.into_iter().map(|details| {
+                    let uri=details.uri.clone();
+                    html! {
+                        <Tab uri={uri} selected={(*current_tab).clone()} />
+                    }
+                })
+            }
+        </StyledTabContainer>
     }
 }
 

@@ -7,43 +7,6 @@ use stylist::yew::styled_component;
 use wasm_bindgen_futures::{spawn_local, JsFuture};
 use yew::prelude::*;
 
-#[function_component(MenuContainer)]
-pub fn menu_container() -> Html {
-    html! {
-        <div class={css!(r#"
-            background-color: red;
-            width: 100%;
-            height: 100%;
-        "#)}>
-            {"menu"}
-        </div>
-    }
-}
-
-#[function_component(EditorContainer)]
-pub fn editor_container() -> Html {
-    let styles: String = "width: 100%; height: 100%; max-height: 90vh;".into();
-    html! {
-        <div class={css!(r#"
-            width: 100%;
-            height: 100%;
-        "#)}>
-            <Editor {styles}/>
-        </div>
-    }
-}
-
-#[function_component(RuntimeContainer)]
-pub fn runtime_container() -> Html {
-    html! {
-        <div class={css!(r#"
-            background-color: green;
-        "#)}>
-            {"runtime"}
-        </div>
-    }
-}
-
 #[styled_component(App)]
 pub fn app() -> Html {
     let bridge = MipsyWebWorker::spawner()
@@ -59,6 +22,8 @@ pub fn app() -> Html {
         // We need to hold the bridge until the worker resolves.
         let promise = Promise::new(&mut |_, _| {});
         let a = JsFuture::from(promise).await;
+        //TODO: use channels to send messages/await
+        // responses from the worker
         log::error!("{:?}", a);
     });
 
@@ -98,6 +63,43 @@ fn app_container(props: &AppContainerProps) -> Html {
             {
                 for props.children.iter()
             }
+        </div>
+    }
+}
+
+#[styled_component(MenuContainer)]
+pub fn menu_container() -> Html {
+    html! {
+        <div class={css!(r#"
+            background-color: red;
+            width: 100%;
+            height: 100%;
+        "#)}>
+            {"menu"}
+        </div>
+    }
+}
+
+#[styled_component(EditorContainer)]
+pub fn editor_container() -> Html {
+    let styles: String = "width: 100%; height: 100%; max-height: 90vh;".into();
+    html! {
+        <div class={css!(r#"
+            width: 100%;
+            height: 100%;
+        "#)}>
+            <Editor {styles}/>
+        </div>
+    }
+}
+
+#[styled_component(RuntimeContainer)]
+pub fn runtime_container() -> Html {
+    html! {
+        <div class={css!(r#"
+            background-color: green;
+        "#)}>
+            {"runtime"}
         </div>
     }
 }

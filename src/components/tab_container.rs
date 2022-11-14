@@ -44,7 +44,7 @@ pub fn tabs() -> Html {
     // TODO(tabs): tab onclick to focus
     // TODO(tabs): if the filename is not already open, show filename, else show full path
     // TODO(tabs): if the filename is too long, truncate it
-
+    // TODO(tabs): save and restore scroll position, cursor (editor.restoreViewState)
     html! {
         <ContextProvider<Vec<String>> context={all_tabs.clone().collect::<Vec<String>>()}>
             <StyledTabContainer>

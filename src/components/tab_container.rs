@@ -1,14 +1,50 @@
+use std::ops::Deref;
+
 use crate::components::tab::Tab;
 use bounce::prelude::*;
 use monaco::yew::CodeEditorLink;
 use stylist::yew::styled_component;
 use yew::prelude::*;
 
+#[derive(Debug)]
+pub struct UriEq(monaco::sys::Uri);
+
+impl PartialEq for UriEq {
+    /// Compare two `Uri`s by their `path`
+    /// Given that we only ever use `Uri`s to represent files, this is sufficient
+    fn eq(&self, other: &Self) -> bool {
+        self.0.path() == other.0.path()
+    }
+}
+
+impl Eq for UriEq {}
+
+impl Clone for UriEq {
+    fn clone(&self) -> Self {
+        Self(monaco::sys::Uri::from(&self.0.clone()))
+    }
+}
+
+impl Deref for UriEq {
+    type Target = monaco::sys::Uri;
+
+    fn deref(&self) -> &Self::Target {
+        &self.0
+    }
+}
+
+impl From<monaco::sys::Uri> for UriEq {
+    fn from(uri: monaco::sys::Uri) -> Self {
+        Self(uri)
+    }
+}
+
 /// A container for tab details
 #[derive(Clone, Debug, PartialEq, Eq)]
 pub struct TabDetails {
     /// The tab's uri
-    uri: String,
+    /// URI is not derive Eq, so we'll just use a string
+    uri: UriEq,
     /// The full path to the file
     /// showing full_path or just name
     /// is handled by the Tab component
@@ -26,7 +62,7 @@ impl Default for TabDetailsList {
             let display_name = model.uri().path();
 
             TabDetails {
-                uri: model.uri().to_string(false),
+                uri: model.uri().into(),
                 display_name,
             }
         });
@@ -101,6 +137,9 @@ pub fn styled_tabs(StyledTabContainerProps { children }: &StyledTabContainerProp
         <ul class={css!(r#"
             display: flex;
             flex-direction: row;
+            min-height: 60px;
+            border: 1px solid black;
+            border-bottom: none;
         "#)}>
             { for children.iter() }
         </ul>

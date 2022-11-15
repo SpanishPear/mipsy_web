@@ -1,19 +1,24 @@
+use std::ops::Deref;
+
 use stylist::yew::styled_component;
 use yew::prelude::*;
 
+use super::tab_container::UriEq;
+
 #[derive(Properties, PartialEq, Eq)]
 pub struct TabProps {
-    pub uri: String,
+    pub uri: UriEq,
     pub selected: Option<String>,
 }
 
 #[styled_component(Tab)]
 pub fn tab(TabProps { uri, selected }: &TabProps) -> Html {
-    // TODO: move uri and display_name to a separate struct
-    let display_name = uri.split('/').last().unwrap_or_default();
+    let selected = selected.as_ref().map(|s| *s == uri.path()).unwrap_or(false);
+    let uri_string = uri.to_string(false);
+    let display_name = uri_string.split('/').last().unwrap_or_default();
 
     html! {
-        <StyledTab selected={*selected == Some(uri.to_string())}>
+        <StyledTab selected={selected}>
             <span>{display_name}</span>
         </StyledTab>
     }

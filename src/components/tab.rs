@@ -13,6 +13,13 @@ pub struct TabProps {
 
 #[styled_component(Tab)]
 pub fn tab(TabProps { uri, selected }: &TabProps) -> Html {
+    // TODO(tabs): tab close button
+    // TODO(tabs): tab middle click to close
+    // TODO(stretch): tab drag and drop to reorder
+    // TODO(tabs): tab onclick to focus
+    // TODO(tabs): if the filename is not already open, show filename, else show full path
+    // TODO(tabs): if the filename is too long, truncate it
+    // TODO(tabs): save and restore scroll position, cursor (editor.restoreViewState)
     let selected = selected.as_ref().map(|s| *s == uri.path()).unwrap_or(false);
     let uri_string = uri.to_string(false);
     let display_name = uri_string.split('/').last().unwrap_or_default();

@@ -5,7 +5,7 @@ use stylist::yew::styled_component;
 use yew::prelude::*;
 
 /// A container for tab details
-#[derive(Clone, Debug, PartialEq)]
+#[derive(Clone, Debug, PartialEq, Eq)]
 pub struct TabDetails {
     /// The tab's uri
     uri: String,
@@ -23,7 +23,7 @@ struct TabDetailsList {
 impl Default for TabDetailsList {
     fn default() -> Self {
         let all_tabs = monaco::api::TextModel::get_all().into_iter().map(|model| {
-            let display_name = model.uri().path().to_string();
+            let display_name = model.uri().path();
 
             TabDetails {
                 uri: model.uri().to_string(false),
@@ -48,7 +48,6 @@ pub fn tabs() -> Html {
     // after the first render, get the current tab
     {
         let current_tab = current_tab.clone();
-        let link = link.clone();
         use_effect(move || {
             let maybe_tabname = link.with_editor(|editor| {
                 editor
@@ -59,7 +58,7 @@ pub fn tabs() -> Html {
             });
 
             if let Some(current_tab_name) = maybe_tabname {
-                if *current_tab == None {
+                if current_tab.is_none() {
                     current_tab.set(Some(current_tab_name));
                 }
             }
@@ -80,7 +79,7 @@ pub fn tabs() -> Html {
     html! {
         <StyledTabContainer>
             {
-                for all_tabs.into_iter().map(|details| {
+                for all_tabs.iter().map(|details| {
                     let uri=details.uri.clone();
                     html! {
                         <Tab uri={uri} selected={(*current_tab).clone()} />

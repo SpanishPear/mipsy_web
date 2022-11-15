@@ -40,8 +40,5 @@ pub fn setup_splits() -> JsValue {
     )
     .expect("Creating options via reflection failed");
 
-    // TODO: move to tracing
-    log::info!("options: {:?}", options);
-
     Split(split_elements.into(), options)
 }

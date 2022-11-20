@@ -1,13 +1,17 @@
 {
 	"name": "Rust",
-	"image": "mcr.microsoft.com/devcontainers/rust:1-buster"
-
-	// Features to add to the dev container. More info: https://containers.dev/features.
-	// "features": {},
+	"build": { "dockerfile": "Dockerfile" },
 
 	// Use 'forwardPorts' to make a list of ports inside the container available locally.
-	// "forwardPorts": [],
+	"forwardPorts": [8080],
 
+	"settings": {
+		"terminal.integrated.shell.linux": "/bin/zsh"
+	},
+
+	"extensions": [
+		"rust-lang.rust-analyzer"
+	],
 	// Use 'postCreateCommand' to run commands after the container is created.
 	// "postCreateCommand": "rustc --version",
 
@@ -15,5 +19,5 @@
 	// "customizations": {},
 
 	// Uncomment to connect as root instead. More info: https://aka.ms/dev-containers-non-root.
-	// "remoteUser": "root"
+	"remoteUser": "root"
 }

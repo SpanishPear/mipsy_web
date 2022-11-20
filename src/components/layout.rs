@@ -20,9 +20,9 @@ pub fn resizable_layout(props: &ResizableLayoutProps) -> Html {
             display: grid;
         "#)}>
             <div class={css!(r#"
-                flex: 1;
                 display: flex;
                 flex-direction: row;
+                max-width: 98vw;
             "#)}>
                 <div class={css!(r#"
                     border: 1px solid black;
@@ -32,7 +32,6 @@ pub fn resizable_layout(props: &ResizableLayoutProps) -> Html {
                 </div>
 
                 <div class={css!(r#"
-                    flex-grow: 1;
                 "#)} id="middle">
                     {props.editor_container.clone()}
                 </div>

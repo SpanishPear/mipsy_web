@@ -1,3 +1,4 @@
+#![allow(clippy::let_unit_value)]
 pub mod agent;
 pub mod components;
 pub mod editor;

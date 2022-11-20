@@ -3,12 +3,24 @@ use crate::{
     components::{layout::ResizableLayout, menubar::MenuBar},
     editor::component::Editor,
 };
+use bounce::Atom;
 use gloo_worker::Spawnable;
 use js_sys::Promise;
 use stylist::css;
 use stylist::yew::styled_component;
 use wasm_bindgen_futures::{spawn_local, JsFuture};
 use yew::prelude::*;
+
+#[derive(Default, Debug, Clone, PartialEq, Eq)]
+pub struct FileInfo {
+    pub name: String,
+    pub contents: String,
+}
+
+#[derive(Atom, Default, Debug, Clone, PartialEq, Eq)]
+pub struct FileList {
+    pub files: Vec<FileInfo>,
+}
 
 #[styled_component(App)]
 pub fn app() -> Html {
@@ -89,6 +101,8 @@ pub fn editor_container() -> Html {
         <div class={css!(r#"
             width: 100%;
             height: 100%;
+            min-width: 100%;
+            min-height: 100%;
         "#)}>
             <Editor {styles}/>
         </div>

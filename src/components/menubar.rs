@@ -1,15 +1,15 @@
-use bounce::use_atom;
+use bounce::{use_atom, use_slice};
 use gloo::file::File;
 use stylist::yew::styled_component;
 use wasm_bindgen_futures::spawn_local;
 use web_sys::HtmlInputElement;
 use yew::prelude::*;
 
-use crate::components::app::{FileInfo, FileList};
+use crate::components::app::{FileInfo, FileList, FileListAction};
 
 #[styled_component(MenuBar)]
 pub fn menubar() -> Html {
-    let files = use_atom::<FileList>();
+    let files = use_slice::<FileList>();
     let onchange = {
         Callback::from(move |e: Event| {
             let input: HtmlInputElement = e.target_unchecked_into();
@@ -30,35 +30,19 @@ pub fn menubar() -> Html {
             for file in result.into_iter() {
                 let name = file.name();
                 let contents = gloo::file::futures::read_as_bytes(&file);
-                {
-                    let files = files.clone();
-                    spawn_local(async move {
-                        let contents = contents.await;
+                let files = files.clone();
+                spawn_local(async move {
+                    let contents = contents.await;
 
-                        // TODO(error handling): handle invalid utf8
-                        let contents = contents.expect("File contains invalid utf8");
+                    // TODO(error handling): handle invalid utf8
+                    let contents = contents.expect("File contains invalid utf8");
 
-                        let contents = String::from_utf8(contents).unwrap();
+                    let contents = String::from_utf8(contents).unwrap();
 
-                        // append file to the file FileList
-                        // extend the vec files with the new FileInfo
-                        {
-                            let contents = contents.clone();
-                            let name = name.clone();
-                            files.set(FileList {
-                                files: (*files
-                                    .files
-                                    .iter()
-                                    .cloned()
-                                    .chain(std::iter::once(FileInfo { name, contents }))
-                                    .collect::<Vec<FileInfo>>())
-                                .to_vec(),
-                            });
-                        }
+                    files.dispatch(FileListAction::Append(name, contents));
 
-                        log::info!("{}: {:?}", name, contents);
-                    })
-                };
+                    files.dispatch(FileListAction::Log);
+                });
             }
         })
     };

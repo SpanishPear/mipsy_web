@@ -1,5 +1,6 @@
 use std::ops::Deref;
 
+use crate::components::app::FileList;
 use crate::components::tab::Tab;
 use bounce::prelude::*;
 use monaco::yew::CodeEditorLink;
@@ -39,79 +40,24 @@ impl From<monaco::sys::Uri> for UriEq {
     }
 }
 
-/// A container for tab details
-#[derive(Clone, Debug, PartialEq, Eq)]
-pub struct TabDetails {
-    /// The tab's uri
-    /// URI is not derive Eq, so we'll just use a string
-    uri: UriEq,
-    /// The full path to the file
-    /// showing full_path or just name
-    /// is handled by the Tab component
-    display_name: String,
-}
-
-#[derive(Atom, Debug, Clone, PartialEq)]
-struct TabDetailsList {
-    pub inner: Vec<TabDetails>,
-}
-
-impl Default for TabDetailsList {
-    fn default() -> Self {
-        let all_tabs = monaco::api::TextModel::get_all().into_iter().map(|model| {
-            let display_name = model.uri().path();
-
-            TabDetails {
-                uri: model.uri().into(),
-                display_name,
-            }
-        });
-
-        Self {
-            inner: all_tabs.collect(),
-        }
-    }
-}
-
 #[styled_component(TabContainer)]
 pub fn tabs() -> Html {
     let link = use_context::<CodeEditorLink>().expect("should have a link");
     // get a vec of all model paths
 
-    let all_tabs = &use_atom::<TabDetailsList>().inner;
-    let current_tab: UseStateHandle<Option<String>> = use_state(|| None);
-
-    // after the first render, get the current tab
-    {
-        let current_tab = current_tab.clone();
-        use_effect(move || {
-            let maybe_tabname = link.with_editor(|editor| {
-                editor
-                    .get_model()
-                    .expect("There should always be one tab focused")
-                    .uri()
-                    .path()
-            });
-
-            if let Some(current_tab_name) = maybe_tabname {
-                if current_tab.is_none() {
-                    current_tab.set(Some(current_tab_name));
-                }
-            }
-
-            || ()
-        });
-    }
+    let all_tabs = &use_slice_value::<FileList>().files;
+    let selected = &use_slice_value::<FileList>().selected;
 
     // loop through all tabs, and render a tab for each one
     // add the selected class to the tab that is currently selected
     html! {
         <StyledTabContainer>
             {
-                for all_tabs.iter().map(|details| {
+                for all_tabs.iter().enumerate().map(|(index, details)| {
                     let uri=details.uri.clone();
+                    let is_selected = selected.is_some() && selected.unwrap() == index;
                     html! {
-                        <Tab uri={uri} selected={(*current_tab).clone()} />
+                        <Tab uri={uri} name={details.name.clone()} {is_selected} />
                     }
                 })
             }

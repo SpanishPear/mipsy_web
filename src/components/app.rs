@@ -3,23 +3,116 @@ use crate::{
     components::{layout::ResizableLayout, menubar::MenuBar},
     editor::component::Editor,
 };
-use bounce::Atom;
+use bounce::Slice;
 use gloo_worker::Spawnable;
-use js_sys::Promise;
+use js_sys::{Object, Promise};
+use monaco::sys::editor::ICodeEditorViewState;
+use std::rc::Rc;
 use stylist::css;
 use stylist::yew::styled_component;
 use wasm_bindgen_futures::{spawn_local, JsFuture};
 use yew::prelude::*;
 
-#[derive(Default, Debug, Clone, PartialEq, Eq)]
+use super::tab_container::UriEq;
+
+#[derive(Debug, Clone, PartialEq, Eq)]
 pub struct FileInfo {
     pub name: String,
     pub contents: String,
+    pub uri: UriEq,
+    pub state: Option<Object>,
 }
 
-#[derive(Atom, Default, Debug, Clone, PartialEq, Eq)]
+#[derive(Slice, Default, Debug, Clone, PartialEq, Eq)]
 pub struct FileList {
     pub files: Vec<FileInfo>,
+    pub selected: Option<usize>,
+}
+
+pub enum FileListAction {
+    /// Append a file to the list
+    ///    name    contents
+    Append(String, String),
+    /// Remove a file from the FileList
+    ///    name
+    Remove(UriEq),
+    /// update the stored view state (on switching tabs usually)
+    ///          name   contents
+    SetViewState(ICodeEditorViewState),
+    /// updates the selected
+    SetSelected(UriEq),
+    /// Log the current state of the FileList
+    Log,
+}
+
+impl Reducible for FileList {
+    type Action = FileListAction;
+
+    fn reduce(self: Rc<Self>, action: Self::Action) -> Rc<Self> {
+        match action {
+            FileListAction::Append(name, contents) => {
+                let mut files = self.files.clone();
+
+                let uri = monaco::api::TextModel::create(contents.as_str(), "mips".into(), None)
+                    .expect("Failed to create text model")
+                    .uri();
+
+                files.push(FileInfo {
+                    name,
+                    contents,
+                    uri: uri.into(),
+                    state: None,
+                });
+
+                // select the first file
+                let selected = if self.files.is_empty() {
+                    Some(0)
+                } else {
+                    self.selected
+                };
+
+                Rc::new(Self { files, selected })
+            }
+            FileListAction::Remove(uri) => {
+                let mut files = self.files.clone();
+                files.retain(|file| file.uri != uri);
+                Rc::new(Self {
+                    files,
+                    selected: self.selected,
+                })
+            }
+            FileListAction::SetViewState(state) => {
+                let item = state.value_of();
+
+                let mut files = self.files.clone();
+
+                // set the selected view state
+                if let Some(selected) = self.selected {
+                    files[selected].state = Some(item);
+                }
+
+                Rc::new(Self {
+                    files,
+                    selected: self.selected,
+                })
+            }
+            FileListAction::SetSelected(uri) => {
+                let selected = self.files.iter().position(|file| file.uri == uri);
+
+                Rc::new(Self {
+                    files: self.files.clone(),
+                    selected,
+                })
+            }
+            FileListAction::Log => {
+                log::info!(
+                    "FileList: {:?}",
+                    self.files.iter().map(|f| &f.name).collect::<Vec<_>>()
+                );
+                self
+            }
+        }
+    }
 }
 
 #[styled_component(App)]

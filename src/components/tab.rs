@@ -29,25 +29,20 @@ pub fn tab(
     // TODO(tabs): tab onclick to focus
     // TODO(tabs): if the filename is not already open, show filename, else show full path
     // TODO(tabs): if the filename is too long, truncate it
-    // TODO(tabs): save and restore scroll position, cursor (editor.restoreViewState)
     let editor_link = use_context::<CodeEditorLink>().expect("should have a link");
     let files = use_slice::<FileList>();
     let select_onclick = {
         let uri = uri.clone();
         let files = files.clone();
+        let editor_link = editor_link.clone();
         Callback::from(move |_: MouseEvent| {
             editor_link.with_editor(|editor| {
                 // save editors view state
 
-                let view_state = editor
-                    .as_ref()
-                    .save_view_state()
-                    .expect("should have a view state");
+                let view_state = editor.as_ref().save_view_state();
 
-                log::info!("made it");
                 files.dispatch(FileListAction::SetViewState(view_state));
 
-                log::info!("made it2");
                 files.dispatch(FileListAction::SetSelected(uri.clone()));
 
                 editor
@@ -71,6 +66,40 @@ pub fn tab(
     let close_onclick = {
         let uri = uri.clone();
         Callback::from(move |_: MouseEvent| {
+            // always have one tab open...
+            if files.files.len() == 1 {
+                return;
+            }
+
+            // change selected model to avail
+            // handle wrapping
+            let next = files
+                .files
+                .iter()
+                .position(|f| f.uri == uri)
+                .map(|i| i + 1)
+                .unwrap_or(0);
+
+            let next = if next >= files.files.len() - 1 {
+                next - 1
+            } else {
+                next
+            };
+
+            let next = std::cmp::max(next, 0);
+
+            let next = files.files.get(next).map(|f| f.uri.clone());
+            // set model to next
+            if let Some(next) = next {
+                files.dispatch(FileListAction::SetSelected(next.clone()));
+                editor_link.with_editor(|editor| {
+                    editor.set_model(
+                        &monaco::api::TextModel::get(&next).expect("The model should exist"),
+                    );
+                });
+            }
+
+            // remove model
             monaco::sys::editor::get_model(&uri)
                 .expect("The model should exist")
                 .dispose();
@@ -103,6 +132,7 @@ pub fn styled_tab(
         close_onclick,
     }: &StyledTabProps,
 ) -> Html {
+    // TODO(tabs): disable/remove close button on last tab
     html! {
         <li
             style={ if *selected { "color: #fff; background-color: #1e1e1e; border-bottom: none;" } else { "" } }

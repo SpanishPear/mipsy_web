@@ -38,7 +38,7 @@ pub enum FileListAction {
     Remove(UriEq),
     /// update the stored view state (on switching tabs usually)
     ///          name   contents
-    SetViewState(ICodeEditorViewState),
+    SetViewState(Option<ICodeEditorViewState>),
     /// updates the selected
     SetSelected(UriEq),
     /// Log the current state of the FileList
@@ -82,19 +82,23 @@ impl Reducible for FileList {
                 })
             }
             FileListAction::SetViewState(state) => {
-                let item = state.value_of();
+                if let Some(state) = state {
+                    let item = state.value_of();
 
-                let mut files = self.files.clone();
+                    let mut files = self.files.clone();
 
-                // set the selected view state
-                if let Some(selected) = self.selected {
-                    files[selected].state = Some(item);
+                    // set the selected view state
+                    if let Some(selected) = self.selected {
+                        files[selected].state = Some(item);
+                    }
+
+                    Rc::new(Self {
+                        files,
+                        selected: self.selected,
+                    })
+                } else {
+                    self
                 }
-
-                Rc::new(Self {
-                    files,
-                    selected: self.selected,
-                })
             }
             FileListAction::SetSelected(uri) => {
                 let selected = self.files.iter().position(|file| file.uri == uri);

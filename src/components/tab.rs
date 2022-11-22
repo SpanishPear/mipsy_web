@@ -1,10 +1,10 @@
-use bounce::use_slice;
+use bounce::{use_atom, use_slice};
 use monaco::yew::CodeEditorLink;
 use stylist::yew::styled_component;
 use wasm_bindgen::JsValue;
 use yew::prelude::*;
 
-use crate::components::app::{FileList, FileListAction};
+use crate::components::app::{FileList, FileListAction, MipsyCodeEditorLink};
 
 use super::tab_container::UriEq;
 
@@ -29,14 +29,14 @@ pub fn tab(
     // TODO(tabs): tab onclick to focus
     // TODO(tabs): if the filename is not already open, show filename, else show full path
     // TODO(tabs): if the filename is too long, truncate it
-    let editor_link = use_context::<CodeEditorLink>().expect("should have a link");
+    let editor_link = use_atom::<MipsyCodeEditorLink>();
     let files = use_slice::<FileList>();
     let select_onclick = {
         let uri = uri.clone();
         let files = files.clone();
         let editor_link = editor_link.clone();
         Callback::from(move |_: MouseEvent| {
-            editor_link.with_editor(|editor| {
+            editor_link.link.with_editor(|editor| {
                 // save editors view state
 
                 let view_state = editor.as_ref().save_view_state();
@@ -92,7 +92,7 @@ pub fn tab(
             // set model to next
             if let Some(next) = next {
                 files.dispatch(FileListAction::SetSelected(next.clone()));
-                editor_link.with_editor(|editor| {
+                editor_link.link.with_editor(|editor| {
                     editor.set_model(
                         &monaco::api::TextModel::get(&next).expect("The model should exist"),
                     );

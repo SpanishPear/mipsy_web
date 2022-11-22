@@ -1,6 +1,8 @@
+use crate::components::app::MipsyCodeEditorLink;
 use crate::components::tab_container::TabContainer;
 use crate::editor::get_options;
-use monaco::yew::{CodeEditor, CodeEditorLink};
+use bounce::use_atom;
+use monaco::yew::CodeEditor;
 use stylist::yew::styled_component;
 use stylist::StyleSource;
 use yew::prelude::*;
@@ -14,16 +16,16 @@ pub struct EditorProps {
 pub fn editor(EditorProps { styles }: &EditorProps) -> Html {
     let styles: StyleSource = styles.as_str().into();
 
-    let link: UseStateHandle<CodeEditorLink> = use_state(CodeEditorLink::default);
+    let link = use_atom::<MipsyCodeEditorLink>();
 
     html! {
-        <ContextProvider<CodeEditorLink> context={(*link).clone()}>
+        <>
             <TabContainer />
             <CodeEditor
                 classes={styles}
                 options={get_options()}
-                link={(*link).clone()}
+                link={(*link).clone().link}
             />
-        </ContextProvider<CodeEditorLink>>
+        </>
     }
 }

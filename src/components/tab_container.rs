@@ -1,9 +1,8 @@
 use std::ops::Deref;
 
-use crate::components::app::FileList;
+use crate::components::app::{FileList, MipsyCodeEditorLink};
 use crate::components::tab::Tab;
 use bounce::prelude::*;
-use monaco::yew::CodeEditorLink;
 use stylist::yew::styled_component;
 use yew::prelude::*;
 
@@ -42,9 +41,7 @@ impl From<monaco::sys::Uri> for UriEq {
 
 #[styled_component(TabContainer)]
 pub fn tabs() -> Html {
-    let link = use_context::<CodeEditorLink>().expect("should have a link");
     // get a vec of all model paths
-
     let all_tabs = &use_slice_value::<FileList>().files;
     let selected = &use_slice_value::<FileList>().selected;
 

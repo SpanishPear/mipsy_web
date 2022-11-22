@@ -3,10 +3,11 @@ use crate::{
     components::{layout::ResizableLayout, menubar::MenuBar},
     editor::component::Editor,
 };
-use bounce::Slice;
+use bounce::{use_atom, use_slice, Atom, Slice};
 use gloo_worker::Spawnable;
 use js_sys::{Object, Promise};
 use monaco::sys::editor::ICodeEditorViewState;
+use monaco::yew::CodeEditorLink;
 use std::rc::Rc;
 use stylist::css;
 use stylist::yew::styled_component;
@@ -119,8 +120,15 @@ impl Reducible for FileList {
     }
 }
 
+#[derive(Atom, Default, Debug, Clone, PartialEq)]
+pub struct MipsyCodeEditorLink {
+    pub link: CodeEditorLink,
+}
+
 #[styled_component(App)]
 pub fn app() -> Html {
+    let code_editor_link = use_atom::<MipsyCodeEditorLink>();
+
     let bridge = MipsyWebWorker::spawner()
         .callback(move |m| {
             // this runs in the main browser thread
@@ -138,6 +146,20 @@ pub fn app() -> Html {
         // responses from the worker
         log::error!("{:?}", a);
     });
+
+    let files = use_slice::<FileList>();
+    use_effect_with_deps(
+        move |_| {
+            log::info!("files: {:?}", files);
+            files.dispatch(FileListAction::Append(
+                "main.s".into(),
+                include_str!("../main.s").into(),
+            ));
+
+            || ()
+        },
+        (),
+    );
 
     html! {
         <AppContainer>

@@ -7,6 +7,7 @@ use bounce::{use_atom, use_slice, Atom, Slice};
 use gloo_worker::Spawnable;
 use js_sys::{Object, Promise};
 use monaco::sys::editor::ICodeEditorViewState;
+use monaco::sys::Uri;
 use monaco::yew::CodeEditorLink;
 use std::rc::Rc;
 use stylist::css;
@@ -32,7 +33,7 @@ pub struct FileList {
 
 pub enum FileListAction {
     /// Append a file to the list
-    ///    name    contents
+    ///    name    contents create_monacotext_model
     Append(String, String),
     /// Remove a file from the FileList
     ///    name
@@ -54,14 +55,16 @@ impl Reducible for FileList {
             FileListAction::Append(name, contents) => {
                 let mut files = self.files.clone();
 
-                let uri = monaco::api::TextModel::create(contents.as_str(), "mips".into(), None)
-                    .expect("Failed to create text model")
-                    .uri();
+                let uri: UriEq =
+                    monaco::api::TextModel::create(contents.as_str(), "mips".into(), None)
+                        .expect("Failed to create text model")
+                        .uri()
+                        .into();
 
                 files.push(FileInfo {
                     name,
                     contents,
-                    uri: uri.into(),
+                    uri,
                     state: None,
                 });
 
@@ -112,7 +115,10 @@ impl Reducible for FileList {
             FileListAction::Log => {
                 log::info!(
                     "FileList: {:?}",
-                    self.files.iter().map(|f| &f.name).collect::<Vec<_>>()
+                    self.files
+                        .iter()
+                        .map(|f| (&f.name, f.uri.to_string(false)))
+                        .collect::<Vec<_>>()
                 );
                 self
             }
@@ -150,11 +156,16 @@ pub fn app() -> Html {
     let files = use_slice::<FileList>();
     use_effect_with_deps(
         move |_| {
-            log::info!("files: {:?}", files);
-            files.dispatch(FileListAction::Append(
-                "main.s".into(),
-                include_str!("../main.s").into(),
-            ));
+            code_editor_link.link.with_editor(|editor| {
+                let model = editor.get_model().expect("editor has no model");
+
+                model.set_value(include_str!("../main.s"));
+
+                files.dispatch(FileListAction::Append(
+                    "main.s".into(),
+                    include_str!("../main.s").into(),
+                ));
+            });
 
             || ()
         },

@@ -7,7 +7,6 @@ use bounce::{use_atom, use_slice, Atom, Slice};
 use gloo_worker::Spawnable;
 use js_sys::{Object, Promise};
 use monaco::sys::editor::ICodeEditorViewState;
-use monaco::sys::Uri;
 use monaco::yew::CodeEditorLink;
 use std::rc::Rc;
 use stylist::css;

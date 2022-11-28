@@ -25,6 +25,7 @@ pub fn tab(
     // TODO(tabs): tab middle click to close
     // TODO(tabs): tab drag and drop to reorder
     // TODO(tabs): should opening file with same name as existing file replace existing file?
+    // TODO(tabs): move onclicks to separate functions
     let editor_link = use_atom::<MipsyCodeEditorLink>();
     let files = use_slice::<FileList>();
     let select_onclick = {

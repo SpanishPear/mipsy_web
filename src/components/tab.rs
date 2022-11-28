@@ -1,5 +1,4 @@
 use bounce::{use_atom, use_slice};
-use monaco::yew::CodeEditorLink;
 use stylist::yew::styled_component;
 use wasm_bindgen::JsValue;
 use yew::prelude::*;
@@ -23,12 +22,9 @@ pub fn tab(
         is_selected,
     }: &TabProps,
 ) -> Html {
-    // TODO(tabs): tab close button
     // TODO(tabs): tab middle click to close
-    // TODO(stretch): tab drag and drop to reorder
-    // TODO(tabs): tab onclick to focus
-    // TODO(tabs): if the filename is not already open, show filename, else show full path
-    // TODO(tabs): if the filename is too long, truncate it
+    // TODO(tabs): tab drag and drop to reorder
+    // TODO(tabs): should opening file with same name as existing file replace existing file?
     let editor_link = use_atom::<MipsyCodeEditorLink>();
     let files = use_slice::<FileList>();
     let select_onclick = {
@@ -63,6 +59,7 @@ pub fn tab(
             });
         })
     };
+
     let close_onclick = {
         let uri = uri.clone();
         Callback::from(move |_: MouseEvent| {
@@ -110,7 +107,13 @@ pub fn tab(
     };
     html! {
         <StyledTab selected={*is_selected} {close_onclick} {select_onclick}>
-            <span>{name}</span>
+            <span class={css!(r#"
+                white-space: nowrap;
+                overflow: hidden;
+                text-overflow: ellipsis;
+            "#)}>
+                {name}
+            </span>
         </StyledTab>
     }
 }
@@ -150,6 +153,7 @@ pub fn styled_tab(
                 color: #666666; 
                 font-family: 'Roboto', sans-serif;
                 justify-content: space-between;
+                min-width: 0;
             "#)}
             onclick={select_onclick}
         >

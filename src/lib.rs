@@ -35,8 +35,8 @@ pub fn setup_splits() -> JsValue {
         &JsValue::from("sizes"),
         &(js_sys::Array::of3(
             &JsValue::from(5_f64),
-            &JsValue::from(90_f64),
-            &JsValue::from(5_f64),
+            &JsValue::from(50_f64),
+            &JsValue::from(45_f64),
         )),
     )
     .expect("Creating options via reflection failed");

@@ -1,7 +1,8 @@
 // due to a bug in stylist
 #![allow(clippy::let_unit_value)]
 
-use bounce::BounceRoot;
+use bounce::{use_atom, BounceRoot};
+use mipsy_web::SplitContainer;
 use mipsy_web::{components::app::App, setup_splits};
 use stylist::yew::*;
 use tracing_subscriber::fmt::format::Pretty;
@@ -14,14 +15,21 @@ use yew::prelude::*;
 fn app() -> Html {
     // on the first render, run the javascript
     // that enables panes to resize
-    use_effect_with_deps(
-        |_| {
-            setup_splits();
+    // store a handle for future use
+    let split_container = use_atom::<mipsy_web::SplitContainer>();
+    {
+        use_effect_with_deps(
+            move |_| {
+                let container = SplitContainer {
+                    handle: setup_splits(),
+                };
+                split_container.set(container);
 
-            || ()
-        },
-        (),
-    );
+                || ()
+            },
+            (),
+        );
+    }
 
     html! {
         <BounceRoot>

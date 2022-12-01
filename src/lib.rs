@@ -3,6 +3,7 @@ pub mod agent;
 pub mod components;
 pub mod editor;
 pub mod indexdb_fs;
+use bounce::Atom;
 use js_sys::{Object, Reflect};
 use wasm_bindgen::prelude::*;
 
@@ -23,6 +24,11 @@ impl From<SplitElements> for js_sys::Array {
     }
 }
 
+#[derive(Atom, Default, PartialEq)]
+pub struct SplitContainer {
+    pub handle: JsValue,
+}
+
 pub fn setup_splits() -> JsValue {
     // Initialize split panes
     let split_elements = SplitElements(vec!["#left", "#middle", "#right"]);
@@ -34,12 +40,18 @@ pub fn setup_splits() -> JsValue {
         &options,
         &JsValue::from("sizes"),
         &(js_sys::Array::of3(
-            &JsValue::from(5_f64),
+            &JsValue::from(3_f64),
             &JsValue::from(50_f64),
-            &JsValue::from(45_f64),
+            &JsValue::from(47_f64),
         )),
     )
     .expect("Creating options via reflection failed");
+
+    // set a minsize of 0
+
+    _ = Reflect::set(&options, &JsValue::from("minSize"), &JsValue::from(50_f64));
+
+    log::info!("{:?}", options);
 
     Split(split_elements.into(), options)
 }

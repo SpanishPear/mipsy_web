@@ -48,15 +48,25 @@ pub fn menubar() -> Html {
     };
 
     html! {
-        <input
-            id="file-upload"
-            type="file"
-            accept=".s"
-            // This only allows folders to be selected,
-            // not files.
-            // webkitdirectory={Some("")}
-            multiple={true}
-            {onchange}
-        />
+        <>
+            <label tabindex=0 for="load_file" title="file explorer" class={css!(r#"
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                &:hover {
+                    cursor: pointer;
+                    stroke: white;
+                } 
+            "#)}>
+                <svg viewBox="0 0 20 20" fill="currentColor" class={css!(r#"
+                    width: 2.0rem;
+                    height: 2.0rem;
+                "#)} >
+                  <path stroke-width="3%" fill-rule="evenodd" d="M2 6a2 2 0 012-2h4l2 2h4a2 2 0 012 2v1H8a3 3 0 00-3 3v1.5a1.5 1.5 0 01-3 0V6z" clip-rule="evenodd" />
+                  <path stroke-width="3%" d="M6 12a2 2 0 012-2h8a2 2 0 012 2v2a2 2 0 01-2 2H2h2a2 2 0 002-2v-2z" />
+                </svg>
+            </label>
+            <input id="load_file" {onchange} type="file" multiple={true} accept=".s" style="display: none;" />
+        </>
     }
 }

@@ -1,9 +1,9 @@
 // due to a bug in stylist
 #![allow(clippy::let_unit_value)]
 
-use bounce::{use_atom, BounceRoot};
-use mipsy_web::SplitContainer;
-use mipsy_web::{components::app::App, setup_splits};
+use bounce::{BounceRoot};
+
+use mipsy_web::{components::app::App};
 use stylist::yew::*;
 use tracing_subscriber::fmt::format::Pretty;
 use tracing_subscriber::fmt::time::UtcTime;

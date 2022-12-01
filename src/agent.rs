@@ -29,15 +29,15 @@ impl Worker for MipsyWebWorker {
     type Message = ();
     type Output = FromWorker;
 
-    fn create(scope: &WorkerScope<Self>) -> Self {
+    fn create(_scope: &WorkerScope<Self>) -> Self {
         Self {}
     }
 
-    fn update(&mut self, scope: &WorkerScope<Self>, msg: Self::Message) {
+    fn update(&mut self, _scope: &WorkerScope<Self>, _msg: Self::Message) {
         // no messaging
     }
 
-    fn received(&mut self, scope: &WorkerScope<Self>, msg: Self::Input, id: HandlerId) {
+    fn received(&mut self, scope: &WorkerScope<Self>, _msg: Self::Input, id: HandlerId) {
         // this runs in a web worker
         // and does not block the main
         // browser thread!

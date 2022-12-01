@@ -1,3 +1,4 @@
+use crate::components::file_explorer::FileExplorer;
 use stylist::yew::styled_component;
 use yew::prelude::*;
 
@@ -16,10 +17,7 @@ impl From<PanelType> for Html {
     fn from(panel_type: PanelType) -> Self {
         match panel_type {
             PanelType::FileExplorer => html! {
-                //TODO: file explorer function component
-                <div>
-                    {"File Explorer"}
-                </div>
+                <FileExplorer />
             },
         }
     }
@@ -40,6 +38,8 @@ pub fn render(SecondaryPanelProps { show, panel_type }: &SecondaryPanelProps) ->
                         min-width: 60px;
                         border-left: 1px solid #000;
                         padding: 10px;
+                        width: 100%;
+                        overflow-x: hidden;
                     "#)}>
                 {panel_type}
             </div>

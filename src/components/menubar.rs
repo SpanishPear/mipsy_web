@@ -1,3 +1,6 @@
+use crate::components::secondary_panel::SecondaryPanel;
+use crate::editor::files::{FileList, FileListAction};
+use crate::SplitContainer;
 use bounce::{use_atom, use_slice};
 use gloo::file::File;
 use js_sys::Reflect;
@@ -6,9 +9,6 @@ use wasm_bindgen::{JsCast, JsValue};
 use wasm_bindgen_futures::spawn_local;
 use web_sys::HtmlInputElement;
 use yew::prelude::*;
-
-use crate::editor::files::{FileList, FileListAction};
-use crate::SplitContainer;
 
 #[styled_component(MenuBar)]
 pub fn menubar() -> Html {
@@ -77,11 +77,11 @@ pub fn menubar() -> Html {
     html! {
         <div class={css!(r#"
             display: flex;
+            height: 100%;
         "#)}>
             // icon list of panels
             <div class={css!(r#"
-                padding-left: 10px;
-                padding-right: 10px;
+                padding: 10px;
             "#)}>
                 <label tabindex=0 for="load_file" title="file explorer" {onclick} class={css!(r#"
                     display: flex;
@@ -103,20 +103,7 @@ pub fn menubar() -> Html {
                 //<input id="load_file" {onchange} type="file" multiple={true} accept=".s" style="display: none;" />
             </div>
             // secondary panel
-            {
-              if *show_secondary_panel {
-                html! {
-                    <div class={css!(r#"
-                        min-width: 60px;
-                        border-left: 1px solid #000;
-                    "#)}>
-                        {"secondary panel"}
-                    </div>
-                }
-              } else {
-                html! {}
-              }
-            }
+            <SecondaryPanel show={*show_secondary_panel} />
         </div>
     }
 }

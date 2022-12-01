@@ -3,6 +3,7 @@ use crate::{
     components::{layout::ResizableLayout, menubar::MenuBar},
     editor::component::Editor,
 };
+use crate::{setup_splits, SplitContainer};
 use bounce::{use_atom, use_slice, Atom, Slice};
 use gloo_worker::Spawnable;
 use js_sys::{Object, Promise};
@@ -133,7 +134,23 @@ pub struct MipsyCodeEditorLink {
 #[styled_component(App)]
 pub fn app() -> Html {
     let code_editor_link = use_atom::<MipsyCodeEditorLink>();
+    // on the first render, run the javascript
+    // that enables panes to resize
+    // store a handle for future use
+    let split_container = use_atom::<SplitContainer>();
+    {
+        use_effect_with_deps(
+            move |_| {
+                let container = SplitContainer {
+                    handle: setup_splits(),
+                };
+                split_container.set(container);
 
+                || ()
+            },
+            (),
+        );
+    }
     let bridge = MipsyWebWorker::spawner()
         .callback(move |m| {
             // this runs in the main browser thread

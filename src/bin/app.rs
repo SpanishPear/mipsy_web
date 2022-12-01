@@ -13,24 +13,6 @@ use yew::prelude::*;
 
 #[styled_component(AppRoot)]
 fn app() -> Html {
-    // on the first render, run the javascript
-    // that enables panes to resize
-    // store a handle for future use
-    let split_container = use_atom::<mipsy_web::SplitContainer>();
-    {
-        use_effect_with_deps(
-            move |_| {
-                let container = SplitContainer {
-                    handle: setup_splits(),
-                };
-                split_container.set(container);
-
-                || ()
-            },
-            (),
-        );
-    }
-
     html! {
         <BounceRoot>
             <App />

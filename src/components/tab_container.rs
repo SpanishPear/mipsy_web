@@ -1,8 +1,7 @@
-use std::ops::Deref;
-
-use crate::components::app::{FileList, MipsyCodeEditorLink};
 use crate::components::tab::Tab;
+use crate::editor::files::FileList;
 use bounce::prelude::*;
+use std::ops::Deref;
 use stylist::yew::styled_component;
 use yew::prelude::*;
 

@@ -3,7 +3,9 @@ use stylist::yew::styled_component;
 use wasm_bindgen::JsValue;
 use yew::prelude::*;
 
-use crate::components::app::{FileList, FileListAction, MipsyCodeEditorLink};
+use crate::components::app::MipsyCodeEditorLink;
+use crate::editor::files::FileList;
+use crate::editor::files::FileListAction;
 
 use super::tab_container::UriEq;
 

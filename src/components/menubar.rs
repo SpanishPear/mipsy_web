@@ -1,11 +1,11 @@
-use bounce::{use_atom, use_slice};
+use bounce::use_slice;
 use gloo::file::File;
 use stylist::yew::styled_component;
 use wasm_bindgen_futures::spawn_local;
 use web_sys::HtmlInputElement;
 use yew::prelude::*;
 
-use crate::components::app::{FileInfo, FileList, FileListAction};
+use crate::editor::files::{FileList, FileListAction};
 
 #[styled_component(MenuBar)]
 pub fn menubar() -> Html {

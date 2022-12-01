@@ -1,4 +1,5 @@
 pub mod component;
+pub mod files;
 
 use monaco::sys::editor::{IEditorMinimapOptions, IStandaloneEditorConstructionOptions};
 use serde::{Deserialize, Serialize};

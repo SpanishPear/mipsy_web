@@ -1,11 +1,9 @@
-use crate::components::secondary_panel::SecondaryPanel;
+use crate::components::secondary_panel::{PanelType, SecondaryPanel};
 use crate::editor::files::{FileList, FileListAction};
-use crate::SplitContainer;
+use crate::{toggle_secondary_pane, SplitContainer};
 use bounce::{use_atom, use_slice};
 use gloo::file::File;
-use js_sys::Reflect;
 use stylist::yew::styled_component;
-use wasm_bindgen::{JsCast, JsValue};
 use wasm_bindgen_futures::spawn_local;
 use web_sys::HtmlInputElement;
 use yew::prelude::*;
@@ -14,6 +12,8 @@ use yew::prelude::*;
 pub fn menubar() -> Html {
     let files = use_slice::<FileList>();
     let show_secondary_panel = use_state_eq(|| false);
+    let panel_type = use_state_eq(|| PanelType::FileExplorer);
+
     let _onchange = {
         Callback::from(move |e: Event| {
             let input: HtmlInputElement = e.target_unchecked_into();
@@ -52,24 +52,14 @@ pub fn menubar() -> Html {
     };
 
     // onclick to toggle the secondary panel
-    let onclick = {
+    let onclick = |panel_val: PanelType| {
         let show_secondary_panel = show_secondary_panel.clone();
         let split_handle = use_atom::<SplitContainer>();
+        let panel_type = panel_type.clone();
         Callback::from(move |_| {
-            // create a binding to the setSizes function
-            let set_sizes_fn = Reflect::get(&split_handle.handle, &JsValue::from("setSizes"))
-                .unwrap()
-                .dyn_into::<js_sys::Function>()
-                .unwrap();
-
-            let values = if !(*show_secondary_panel) {
-                js_sys::Array::of3(&JsValue::from(10), &JsValue::from(40), &JsValue::from(50))
-            } else {
-                js_sys::Array::of3(&JsValue::from(3), &JsValue::from(47), &JsValue::from(50))
-            };
-
-            // call the setSizes Function
-            let _resize = set_sizes_fn.call1(&split_handle.handle, &values).unwrap();
+            toggle_secondary_pane(&split_handle.handle, *show_secondary_panel);
+            let panel_val = panel_val.clone();
+            panel_type.set(panel_val);
             show_secondary_panel.set(!(*show_secondary_panel));
         })
     };
@@ -83,27 +73,47 @@ pub fn menubar() -> Html {
             <div class={css!(r#"
                 padding: 10px;
             "#)}>
-                <label tabindex=0 for="load_file" title="file explorer" {onclick} class={css!(r#"
-                    display: flex;
-                    align-items: center;
-                    justify-content: center;
-                    &:hover {
-                        cursor: pointer;
-                        stroke: white;
-                    } 
-                "#)}>
-                    <svg viewBox="0 0 20 20" fill="currentColor" class={css!(r#"
-                        width: 2.0rem;
-                        height: 2.0rem;
-                    "#)} >
-                      <path stroke-width="3%" fill-rule="evenodd" d="M2 6a2 2 0 012-2h4l2 2h4a2 2 0 012 2v1H8a3 3 0 00-3 3v1.5a1.5 1.5 0 01-3 0V6z" clip-rule="evenodd" />
-                      <path stroke-width="3%" d="M6 12a2 2 0 012-2h8a2 2 0 012 2v2a2 2 0 01-2 2H2h2a2 2 0 002-2v-2z" />
-                    </svg>
-                </label>
-                //<input id="load_file" {onchange} type="file" multiple={true} accept=".s" style="display: none;" />
+                {
+                    for PanelType::iter().map(|panel_type| {
+                        let panel_type = panel_type.clone();
+                        html! {
+                            <label tabindex=0 for="load_file" title="file explorer" onclick={onclick(PanelType::FileExplorer)} class={css!(r#"
+                                display: flex;
+                                align-items: center;
+                                justify-content: center;
+                                &:hover {
+                                    cursor: pointer;
+                                    stroke: white;
+                                } 
+                            "#)}>
+                                <PanelIcon panel={panel_type} />
+                            </label>
+                        }
+                    })
+                }
             </div>
             // secondary panel
-            <SecondaryPanel show={*show_secondary_panel} />
+            <SecondaryPanel panel_type={(*panel_type).clone()} show={*show_secondary_panel}/>
         </div>
+    }
+}
+
+#[derive(Properties, PartialEq, Eq)]
+pub struct IconProps {
+    pub panel: PanelType,
+}
+
+#[styled_component(PanelIcon)]
+fn icon_renderer(props: &IconProps) -> Html {
+    match props.panel {
+        PanelType::FileExplorer => html! {
+            <svg viewBox="0 0 20 20" fill="currentColor" class={css!(r#"
+                width: 2.0rem;
+                height: 2.0rem;
+            "#)} >
+              <path stroke-width="3%" fill-rule="evenodd" d="M2 6a2 2 0 012-2h4l2 2h4a2 2 0 012 2v1H8a3 3 0 00-3 3v1.5a1.5 1.5 0 01-3 0V6z" clip-rule="evenodd" />
+              <path stroke-width="3%" d="M6 12a2 2 0 012-2h8a2 2 0 012 2v2a2 2 0 01-2 2H2h2a2 2 0 002-2v-2z" />
+            </svg>
+        },
     }
 }

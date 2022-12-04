@@ -1,6 +1,5 @@
 use bounce::{use_atom, use_slice};
 use stylist::yew::styled_component;
-use wasm_bindgen::JsValue;
 use yew::prelude::*;
 
 use crate::components::app::MipsyCodeEditorLink;
@@ -36,27 +35,14 @@ pub fn tab(
         let editor_link = editor_link.clone();
         Callback::from(move |_: MouseEvent| {
             files.dispatch(FileListAction::SetViewState(editor_link.clone()));
-            editor_link.link.with_editor(|editor| {
-                // save editors view state
-
-                files.dispatch(FileListAction::SetSelected(uri.clone()));
-
-                editor
-                    .set_model(&monaco::api::TextModel::get(&uri).expect("The model should exist"));
-
-                // restore editors view state
-
-                let view_state: JsValue = files
-                    .files
-                    .iter()
-                    .find(|f| f.uri == uri)
-                    .expect("The file should exist")
-                    .state
-                    .clone()
-                    .into();
-
-                editor.as_ref().restore_view_state(&view_state.into());
-            });
+            files.dispatch(FileListAction::SetSelected(
+                uri.clone(),
+                editor_link.clone(),
+            ));
+            files.dispatch(FileListAction::RestoreViewState(
+                editor_link.clone(),
+                uri.clone(),
+            ));
         })
     };
 
@@ -88,12 +74,7 @@ pub fn tab(
             let next = files.files.get(next).map(|f| f.uri.clone());
             // set model to next
             if let Some(next) = next {
-                files.dispatch(FileListAction::SetSelected(next.clone()));
-                editor_link.link.with_editor(|editor| {
-                    editor.set_model(
-                        &monaco::api::TextModel::get(&next).expect("The model should exist"),
-                    );
-                });
+                files.dispatch(FileListAction::SetSelected(next, editor_link.clone()));
             }
 
             // remove model

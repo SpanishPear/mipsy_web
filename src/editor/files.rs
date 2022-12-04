@@ -31,8 +31,10 @@ pub enum FileListAction {
     /// update the stored view state (on switching tabs usually)
     ///          name   contents
     SetViewState(UseAtomHandle<MipsyCodeEditorLink>),
+    /// restore the view state (on switching tabs usually)
+    RestoreViewState(UseAtomHandle<MipsyCodeEditorLink>, UriEq),
     /// updates the selected
-    SetSelected(UriEq),
+    SetSelected(UriEq, UseAtomHandle<MipsyCodeEditorLink>),
     /// Log the current state of the FileList
     Log,
 }
@@ -98,8 +100,14 @@ impl Reducible for FileList {
 
                 return_val.unwrap_or(self)
             }
-            FileListAction::SetSelected(uri) => {
+            FileListAction::SetSelected(uri, editor_link) => {
                 let selected = self.files.iter().position(|file| file.uri == uri);
+
+                editor_link.link.with_editor(|editor| {
+                    editor.set_model(
+                        &monaco::api::TextModel::get(&uri).expect("The model should exist"),
+                    );
+                });
 
                 Rc::new(Self {
                     files: self.files.clone(),
@@ -114,6 +122,22 @@ impl Reducible for FileList {
                         .map(|f| (&f.name, f.uri.to_string(false)))
                         .collect::<Vec<_>>()
                 );
+                self
+            }
+            FileListAction::RestoreViewState(editor_link, uri) => {
+                editor_link.link.with_editor(|editor| {
+                    let view_state: wasm_bindgen::JsValue = self
+                        .files
+                        .iter()
+                        .find(|f| f.uri == uri)
+                        .expect("The file should exist")
+                        .state
+                        .clone()
+                        .into();
+
+                    editor.as_ref().restore_view_state(&view_state.into());
+                });
+
                 self
             }
         }

@@ -68,6 +68,7 @@ pub fn app() -> Html {
                     "main.s".into(),
                     include_str!("../main.s").into(),
                 ));
+                files.dispatch(FileListAction::ToggleCompile(0))
             });
 
             || ()

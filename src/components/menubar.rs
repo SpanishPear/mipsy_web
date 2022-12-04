@@ -1,13 +1,11 @@
 use crate::components::secondary_panel::{PanelType, SecondaryPanel};
-use crate::editor::files::{FileList, FileListAction};
 use crate::{toggle_secondary_pane, SplitContainer};
-use bounce::{use_atom, use_slice};
+use bounce::use_atom;
 use stylist::yew::styled_component;
 use yew::prelude::*;
 
 #[styled_component(MenuBar)]
 pub fn menubar() -> Html {
-    let files = use_slice::<FileList>();
     let show_secondary_panel = use_state_eq(|| false);
     let panel_type = use_state_eq(|| PanelType::FileExplorer);
 

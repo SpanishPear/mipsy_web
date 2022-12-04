@@ -2,7 +2,7 @@ use crate::components::app::MipsyCodeEditorLink;
 use crate::components::new_file_button::NewFileButton;
 use crate::components::open_files_button::OpenFilesButton;
 use crate::editor::files::{FileList, FileListAction};
-use bounce::{use_atom, use_slice};
+use bounce::{use_atom, use_slice, use_slice_dispatch};
 use stylist::yew::styled_component;
 use yew::prelude::*;
 
@@ -12,6 +12,8 @@ use super::tab::TabProps;
 pub fn file_explorer() -> Html {
     let files = &use_slice::<FileList>().files;
     let selected = &use_slice::<FileList>().selected;
+    let files_dispatch = use_slice_dispatch::<FileList>();
+    let to_compile = &use_slice::<FileList>().to_compile;
     html! {
         <>
             // file explorer header container
@@ -41,8 +43,38 @@ pub fn file_explorer() -> Html {
             {
                 for files.iter().enumerate().map(|(index, file_info)| {
                     let is_selected = selected.is_some() && selected.unwrap() == index;
+                    let files_dispatch = files_dispatch.clone();
+                    let checkbox_onchange = {
+                        Callback::from(move |_| {
+                            files_dispatch(FileListAction::ToggleCompile(index));
+                        })
+                    };
+
+                    let checked = to_compile.contains(&index);
+                    let position_in_compile_list = to_compile.iter().position(|x| *x == index);
+
                     html! {
-                        <FileName uri={file_info.uri.clone()}  name={file_info.name.clone()} {is_selected}/>
+                        <div class={css!(r#"
+                            display: flex;
+                            flex-direction: row;
+                            align-items: center;
+                        "#)}>
+                            if position_in_compile_list.is_some() {
+                                <p>
+                                    { position_in_compile_list.unwrap() + 1 }
+                                </p>
+                            }
+                            // if the given index is in the compile list, then "check" the checkbox
+                            <input type="checkbox" onchange={checkbox_onchange} title="add to compile command" {checked} class={
+                                css!(r#"
+                                    margin-right: 0.5rem;
+                                    &:checked {
+                                        background-color: #3f51b5;
+                                    }
+                                "#)
+                            }/>
+                            <FileName uri={file_info.uri.clone()}  name={file_info.name.clone()} {is_selected}/>
+                        </div>
                     }
                 })
             }

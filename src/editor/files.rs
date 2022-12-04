@@ -18,6 +18,8 @@ pub struct FileInfo {
 pub struct FileList {
     pub files: Vec<FileInfo>,
     pub selected: Option<usize>,
+    /// the indexes of the files that are currently being compiled
+    pub to_compile: Vec<usize>, // would use references but they break the slice derive
 }
 
 impl FileList {
@@ -57,6 +59,9 @@ pub enum FileListAction {
     SetSelected(UriEq, UseAtomHandle<MipsyCodeEditorLink>),
     /// Log the current state of the FileList
     Log,
+
+    /// Push an index of self.files to compile list
+    ToggleCompile(usize),
 }
 
 impl Reducible for FileList {
@@ -87,7 +92,11 @@ impl Reducible for FileList {
                     self.selected
                 };
 
-                Rc::new(Self { files, selected })
+                Rc::new(Self {
+                    files,
+                    selected,
+                    to_compile: self.to_compile.clone(),
+                })
             }
             FileListAction::Remove(uri) => {
                 // remove model
@@ -100,6 +109,7 @@ impl Reducible for FileList {
                 Rc::new(Self {
                     files,
                     selected: self.selected,
+                    to_compile: self.to_compile.clone(),
                 })
             }
             FileListAction::SetViewState(editor_link) => {
@@ -119,6 +129,7 @@ impl Reducible for FileList {
                         return_val = Some(Rc::new(Self {
                             files,
                             selected: self.selected,
+                            to_compile: self.to_compile.clone(),
                         }))
                     }
                 });
@@ -137,6 +148,7 @@ impl Reducible for FileList {
                 Rc::new(Self {
                     files: self.files.clone(),
                     selected,
+                    to_compile: self.to_compile.clone(),
                 })
             }
             FileListAction::Log => {
@@ -164,6 +176,23 @@ impl Reducible for FileList {
                 });
 
                 self
+            }
+            FileListAction::ToggleCompile(index) => {
+                // if the usize is not in the list, add it
+                // if it is in the list, remove it, and shuffle the rest down
+
+                let mut to_compile = self.to_compile.clone();
+                if let Some(pos) = to_compile.iter().position(|i| *i == index) {
+                    to_compile.remove(pos);
+                } else {
+                    to_compile.push(index);
+                }
+                log::info!("to_compile: {:?}", to_compile);
+                Rc::new(Self {
+                    files: self.files.clone(),
+                    selected: self.selected,
+                    to_compile,
+                })
             }
         }
     }

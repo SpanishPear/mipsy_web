@@ -1,7 +1,6 @@
 use std::rc::Rc;
 
 use bounce::{Slice, UseAtomHandle};
-use monaco::sys::editor::ICodeEditorViewState;
 use yew::Reducible;
 
 use crate::components::app::MipsyCodeEditorLink;
@@ -19,6 +18,19 @@ pub struct FileInfo {
 pub struct FileList {
     pub files: Vec<FileInfo>,
     pub selected: Option<usize>,
+}
+
+impl FileList {
+    pub fn get_next_tab(&self) -> Option<UriEq> {
+        // get the index of the tab after selected
+
+        if self.files.len() == 1 {
+            None
+        } else {
+            let next_usize = self.selected.map(|i| (i + 1) % self.files.len());
+            next_usize.map(|i| self.files[i].uri.clone())
+        }
+    }
 }
 
 pub enum FileListAction {
@@ -70,6 +82,11 @@ impl Reducible for FileList {
                 Rc::new(Self { files, selected })
             }
             FileListAction::Remove(uri) => {
+                // remove model
+                monaco::sys::editor::get_model(&uri)
+                    .expect("The model should exist")
+                    .dispose();
+
                 let mut files = self.files.clone();
                 files.retain(|file| file.uri != uri);
                 Rc::new(Self {

@@ -49,43 +49,19 @@ pub fn tab(
     let close_onclick = {
         let uri = uri.clone();
         Callback::from(move |_: MouseEvent| {
-            // always have one tab open...
             if files.files.len() == 1 {
                 return;
             }
 
-            // change selected model to avail
-            // handle wrapping
-            let next = files
-                .files
-                .iter()
-                .position(|f| f.uri == uri)
-                .map(|i| i + 1)
-                .unwrap_or(0);
-
-            let next = if next >= files.files.len() - 1 {
-                next - 1
-            } else {
-                next
-            };
-
-            let next = std::cmp::max(next, 0);
-
-            let next = files.files.get(next).map(|f| f.uri.clone());
-            // set model to next
-            if let Some(next) = next {
+            if let Some(next) = files.get_next_tab() {
                 files.dispatch(FileListAction::SetSelected(next, editor_link.clone()));
             }
 
-            // remove model
-            monaco::sys::editor::get_model(&uri)
-                .expect("The model should exist")
-                .dispose();
-
-            // remove from files_list too
+            // remove from files_list, and the monaco editor
             files.dispatch(FileListAction::Remove(uri.clone()));
         })
     };
+
     html! {
         <StyledTab selected={*is_selected} {close_onclick} {select_onclick}>
             <span class={css!(r#"

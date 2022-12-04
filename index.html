@@ -1,20 +1,27 @@
 <!doctype html>
 <html lang="en">
-<head>
+  <head>
     <meta charset="utf-8">
-        <title>mipsy</title>
-        <meta name="description" content="mipsy">
+    <title>mipsy</title>
+    <meta name="description" content="mipsy">
 
-		<!-- our wasm files -->
-        <link data-trunk rel="rust" href="Cargo.toml" data-bin="app" data-type="main" />
-        <link data-trunk rel="rust" href="Cargo.toml" data-bin="worker" data-type="worker" />
+    <!-- our wasm files -->
+    <link data-trunk rel="rust" href="Cargo.toml" data-bin="app" data-type="main" />
+    <link data-trunk rel="rust" href="Cargo.toml" data-bin="worker" data-type="worker" />
 
-		<!-- split.js for the drag and drop areas -->
-		<link data-trunk rel="inline" type="js" href="assets/split.js"/>
+    <!-- split.js for the drag and drop areas -->
+    <link data-trunk rel="inline" type="js" href="assets/split.js"/>
 
-		<!-- assorted css that isn't built into the wasm -->
-        <link data-trunk rel="css" href="assets/index.css" />
-    </head>
-    <body>
-    </body>
+    <link data-trunk rel="copy-file" href="assets/codicon.ttf" />
+
+    <!-- assorted css that isn't built into the wasm -->
+    <link data-trunk rel="css" href="assets/index.css" />
+    <style>
+      html {
+        font-family: "Roboto", sans-serif;
+      }
+    </style>
+  </head>
+  <body>
+  </body>
 </html>

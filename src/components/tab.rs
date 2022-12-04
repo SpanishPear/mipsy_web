@@ -35,12 +35,9 @@ pub fn tab(
         let files = files.clone();
         let editor_link = editor_link.clone();
         Callback::from(move |_: MouseEvent| {
+            files.dispatch(FileListAction::SetViewState(editor_link.clone()));
             editor_link.link.with_editor(|editor| {
                 // save editors view state
-
-                let view_state = editor.as_ref().save_view_state();
-
-                files.dispatch(FileListAction::SetViewState(view_state));
 
                 files.dispatch(FileListAction::SetSelected(uri.clone()));
 

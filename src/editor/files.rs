@@ -1,9 +1,10 @@
 use std::rc::Rc;
 
-use bounce::Slice;
+use bounce::{Slice, UseAtomHandle};
 use monaco::sys::editor::ICodeEditorViewState;
 use yew::Reducible;
 
+use crate::components::app::MipsyCodeEditorLink;
 use crate::components::tab_container::UriEq;
 
 #[derive(Debug, Clone, PartialEq, Eq)]
@@ -29,7 +30,7 @@ pub enum FileListAction {
     Remove(UriEq),
     /// update the stored view state (on switching tabs usually)
     ///          name   contents
-    SetViewState(Option<ICodeEditorViewState>),
+    SetViewState(UseAtomHandle<MipsyCodeEditorLink>),
     /// updates the selected
     SetSelected(UriEq),
     /// Log the current state of the FileList
@@ -74,24 +75,28 @@ impl Reducible for FileList {
                     selected: self.selected,
                 })
             }
-            FileListAction::SetViewState(state) => {
-                if let Some(state) = state {
-                    let item = state.value_of();
+            FileListAction::SetViewState(editor_link) => {
+                let mut return_val: Option<Rc<Self>> = None;
+                editor_link.link.with_editor(|editor| {
+                    let state = editor.as_ref().save_view_state();
+                    if let Some(state) = state {
+                        let item = state.value_of();
 
-                    let mut files = self.files.clone();
+                        let mut files = self.files.clone();
 
-                    // set the selected view state
-                    if let Some(selected) = self.selected {
-                        files[selected].state = Some(item);
+                        // set the selected view state
+                        if let Some(selected) = self.selected {
+                            files[selected].state = Some(item);
+                        }
+
+                        return_val = Some(Rc::new(Self {
+                            files,
+                            selected: self.selected,
+                        }))
                     }
+                });
 
-                    Rc::new(Self {
-                        files,
-                        selected: self.selected,
-                    })
-                } else {
-                    self
-                }
+                return_val.unwrap_or(self)
             }
             FileListAction::SetSelected(uri) => {
                 let selected = self.files.iter().position(|file| file.uri == uri);

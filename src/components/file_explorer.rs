@@ -1,4 +1,5 @@
 use crate::components::new_file_button::NewFileButton;
+use crate::components::open_files_button::OpenFilesButton;
 use crate::editor::files::FileList;
 use bounce::use_slice;
 use stylist::yew::styled_component;
@@ -10,20 +11,28 @@ pub fn file_explorer() -> Html {
     let selected = &use_slice::<FileList>().selected;
     html! {
         <>
+            // file explorer header container
             <div class={css!(r#"
                 display: flex;
                 flex-direction: row;
                 justify-content: space-between;
                 margin-bottom: 0.5rem;
             "#)}>
+                // files title
                 <div class={css!(r#"
                     font-weight: bold;
                 "#)}>
                     { "Files" }
                 </div>
-                // add three checkboxes
-                <div>
+
+                // right hand side buttons
+                <div class={css!(r#"
+                    min-width: 40px;
+                    display: flex;
+                    justify-content: space-between;
+                "#)}>
                     <NewFileButton />
+                    <OpenFilesButton />
                 </div>
             </div>
             {

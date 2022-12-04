@@ -26,19 +26,18 @@ pub fn app() -> Html {
     // that enables panes to resize
     // store a handle for future use
     let split_container = use_atom::<SplitContainer>();
-    {
-        use_effect_with_deps(
-            move |_| {
-                let container = SplitContainer {
-                    handle: setup_splits(),
-                };
-                split_container.set(container);
+    use_effect_with_deps(
+        move |_| {
+            let container = SplitContainer {
+                handle: setup_splits(),
+            };
+            split_container.set(container);
 
-                || ()
-            },
-            (),
-        );
-    }
+            || ()
+        },
+        (),
+    );
+
     let bridge = MipsyWebWorker::spawner()
         .callback(move |m| {
             // this runs in the main browser thread

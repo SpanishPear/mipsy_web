@@ -1,9 +1,12 @@
+use crate::components::app::MipsyCodeEditorLink;
 use crate::components::new_file_button::NewFileButton;
 use crate::components::open_files_button::OpenFilesButton;
-use crate::editor::files::FileList;
-use bounce::use_slice;
+use crate::editor::files::{FileList, FileListAction};
+use bounce::{use_atom, use_slice};
 use stylist::yew::styled_component;
 use yew::prelude::*;
+
+use super::tab::TabProps;
 
 #[styled_component(FileExplorer)]
 pub fn file_explorer() -> Html {
@@ -37,9 +40,9 @@ pub fn file_explorer() -> Html {
             </div>
             {
                 for files.iter().enumerate().map(|(index, file_info)| {
-                    let selected = selected.is_some() && selected.unwrap() == index;
+                    let is_selected = selected.is_some() && selected.unwrap() == index;
                     html! {
-                        <FileName name={file_info.name.clone()} {selected}/>
+                        <FileName uri={file_info.uri.clone()}  name={file_info.name.clone()} {is_selected}/>
                     }
                 })
             }
@@ -48,16 +51,34 @@ pub fn file_explorer() -> Html {
     }
 }
 
-#[derive(Clone, Debug, PartialEq, Eq, Properties)]
-pub struct FileNameProps {
-    pub name: String,
-    pub selected: bool,
-}
-
 #[styled_component(FileName)]
-fn from(FileNameProps { name, selected }: &FileNameProps) -> Self {
+fn from(
+    TabProps {
+        name,
+        uri,
+        is_selected,
+    }: &TabProps,
+) -> Self {
+    let editor_link = use_atom::<MipsyCodeEditorLink>();
+    let files = use_slice::<FileList>();
+
+    let onclick = {
+        let uri = uri.clone();
+        Callback::from(move |_: MouseEvent| {
+            files.dispatch(FileListAction::SetViewState(editor_link.clone()));
+            files.dispatch(FileListAction::SetSelected(
+                uri.clone(),
+                editor_link.clone(),
+            ));
+            files.dispatch(FileListAction::RestoreViewState(
+                editor_link.clone(),
+                uri.clone(),
+            ));
+        })
+    };
+
     html! {
-        <div data-selected={if *selected {"true"} else {"false"}} class={css!(r#"
+        <div {onclick} data-selected={if *is_selected {"true"} else {"false"}} class={css!(r#"
                 display: flex;
                 align-items: center;
                 padding: 0.5rem;

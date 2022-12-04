@@ -23,12 +23,20 @@ pub struct FileList {
 impl FileList {
     pub fn get_next_tab(&self) -> Option<UriEq> {
         // get the index of the tab after selected
+        if self.files.is_empty() {
+            return None;
+        }
 
-        if self.files.len() == 1 {
-            None
+        if let Some(selected) = self.selected {
+            let last_index = self.files.len() - 1;
+            let next_index = (selected + 1) % self.files.len();
+            if next_index == last_index {
+                None
+            } else {
+                Some(self.files[next_index].uri.clone())
+            }
         } else {
-            let next_usize = self.selected.map(|i| (i + 1) % self.files.len());
-            next_usize.map(|i| self.files[i].uri.clone())
+            None
         }
     }
 }

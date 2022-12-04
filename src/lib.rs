@@ -75,5 +75,5 @@ pub fn toggle_secondary_pane(split_handle: &JsValue, showing: bool) {
     };
 
     // call the setSizes Function
-    let _resize = set_sizes_fn.call1(&split_handle, &values).unwrap();
+    let _resize = set_sizes_fn.call1(split_handle, &values).unwrap();
 }

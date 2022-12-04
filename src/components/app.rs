@@ -107,7 +107,7 @@ fn app_container(props: &AppContainerProps) -> Html {
             min-height: 100vh;
             height: 100%;
             width: 100%;
-            background-color: pink;
+            background-color: #fee2e2;
         "#)}>
             {
                 for props.children.iter()

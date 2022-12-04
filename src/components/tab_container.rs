@@ -48,15 +48,15 @@ pub fn tabs() -> Html {
     // add the selected class to the tab that is currently selected
     html! {
         <StyledTabContainer>
-            {
-                for all_tabs.iter().enumerate().map(|(index, details)| {
-                    let uri=details.uri.clone();
-                    let is_selected = selected.is_some() && selected.unwrap() == index;
-                    html! {
-                        <Tab uri={uri} name={details.name.clone()} {is_selected} />
-                    }
-                })
-            }
+        {
+            for all_tabs.iter().enumerate().map(|(index, details)| {
+                let uri=details.uri.clone();
+                let is_selected = selected.is_some() && selected.unwrap() == index;
+                html! {
+                    <Tab uri={uri} name={details.name.clone()} {is_selected} />
+                }
+            })
+        }
         </StyledTabContainer>
     }
 }

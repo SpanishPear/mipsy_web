@@ -8,7 +8,6 @@ pub fn render() -> Html {
     });
 
     html! {
-        <>
         <svg {onclick} version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" x="0px" y="0px"
            viewBox="0 0 485 485" style="enable-background:new 0 0 485 485;" space="preserve"
             class={css!(r#"
@@ -30,6 +29,5 @@ pub fn render() -> Html {
                 350.285,417.187 350.285,370.57 396.901,370.57 396.901,340.57 350.285,340.57 	"/>
             </g>
         </svg>
-        </>
     }
 }

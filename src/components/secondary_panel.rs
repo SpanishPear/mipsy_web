@@ -11,6 +11,11 @@ impl PanelType {
     pub fn iter() -> impl Iterator<Item = PanelType> {
         vec![PanelType::FileExplorer].into_iter()
     }
+    pub fn title(&self) -> String {
+        match self {
+            PanelType::FileExplorer => "File Explorer".to_string(),
+        }
+    }
 }
 
 impl From<PanelType> for Html {

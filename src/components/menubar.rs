@@ -77,14 +77,17 @@ pub fn menubar() -> Html {
                     for PanelType::iter().map(|panel_type| {
                         let panel_type = panel_type.clone();
                         html! {
-                            <label tabindex=0 for="load_file" title="file explorer" onclick={onclick(PanelType::FileExplorer)} class={css!(r#"
-                                display: flex;
-                                align-items: center;
-                                justify-content: center;
-                                &:hover {
-                                    cursor: pointer;
-                                    stroke: white;
-                                } 
+                            <label tabindex=0
+                                title={panel_type.title()}
+                                onclick={onclick(panel_type.clone())}
+                                class={css!(r#"
+                                    display: flex;
+                                    align-items: center;
+                                    justify-content: center;
+                                    &:hover {
+                                        cursor: pointer;
+                                        stroke: white;
+                                    } 
                             "#)}>
                                 <PanelIcon panel={panel_type} />
                             </label>
@@ -93,7 +96,10 @@ pub fn menubar() -> Html {
                 }
             </div>
             // secondary panel
-            <SecondaryPanel panel_type={(*panel_type).clone()} show={*show_secondary_panel}/>
+            <SecondaryPanel
+                panel_type={(*panel_type).clone()}
+                show={*show_secondary_panel}
+            />
         </div>
     }
 }
@@ -111,8 +117,16 @@ fn icon_renderer(props: &IconProps) -> Html {
                 width: 2.0rem;
                 height: 2.0rem;
             "#)} >
-              <path stroke-width="3%" fill-rule="evenodd" d="M2 6a2 2 0 012-2h4l2 2h4a2 2 0 012 2v1H8a3 3 0 00-3 3v1.5a1.5 1.5 0 01-3 0V6z" clip-rule="evenodd" />
-              <path stroke-width="3%" d="M6 12a2 2 0 012-2h8a2 2 0 012 2v2a2 2 0 01-2 2H2h2a2 2 0 002-2v-2z" />
+              <path
+                stroke-width="3%"
+                fill-rule="evenodd"
+                d="M2 6a2 2 0 012-2h4l2 2h4a2 2 0 012 2v1H8a3 3 0 00-3 3v1.5a1.5 1.5 0 01-3 0V6z"
+                clip-rule="evenodd"
+              />
+              <path
+                stroke-width="3%"
+                d="M6 12a2 2 0 012-2h8a2 2 0 012 2v2a2 2 0 01-2 2H2h2a2 2 0 002-2v-2z"
+              />
             </svg>
         },
     }

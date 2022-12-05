@@ -187,7 +187,14 @@ impl Reducible for FileList {
                 } else {
                     to_compile.push(index);
                 }
-                log::info!("to_compile: {:?}", to_compile);
+                // log the current state of the to_compile list, with filenames
+                log::info!(
+                    "to_compile: {:?}",
+                    to_compile
+                        .iter()
+                        .map(|i| &self.files[*i].name)
+                        .collect::<Vec<_>>()
+                );
                 Rc::new(Self {
                     files: self.files.clone(),
                     selected: self.selected,

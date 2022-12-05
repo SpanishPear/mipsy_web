@@ -1,5 +1,5 @@
 use gloo_worker::Registrable;
-use mipsy_web::agent::MipsyWebWorker;
+use mipsy_web::agent::worker::MipsyWebWorker;
 
 fn main() {
     //console_error_panic_hook::set_once();

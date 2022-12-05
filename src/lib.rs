@@ -52,8 +52,6 @@ pub fn setup_splits() -> JsValue {
 
     _ = Reflect::set(&options, &JsValue::from("minSize"), &JsValue::from(50_f64));
 
-    log::info!("{:?}", options);
-
     Split(split_elements.into(), options)
 }
 

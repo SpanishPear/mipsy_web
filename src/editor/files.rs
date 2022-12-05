@@ -1,7 +1,9 @@
+use crate::agent::worker::MipsyWebWorker;
 use crate::editor::MipsyCodeEditorLink;
 use std::rc::Rc;
 
 use bounce::{Slice, UseAtomHandle};
+use gloo_worker::WorkerBridge;
 use yew::Reducible;
 
 use crate::components::tab_container::UriEq;
@@ -62,6 +64,9 @@ pub enum FileListAction {
 
     /// Push an index of self.files to compile list
     ToggleCompile(usize),
+
+    /// Compile all files in the to_compile list
+    SendCompileCode(WorkerBridge<MipsyWebWorker>),
 }
 
 impl Reducible for FileList {
@@ -200,6 +205,16 @@ impl Reducible for FileList {
                     selected: self.selected,
                     to_compile,
                 })
+            }
+            FileListAction::SendCompileCode(bridge) => {
+                let files = self
+                    .to_compile
+                    .iter()
+                    .map(|i| self.files[*i].clone().into())
+                    .collect::<Vec<_>>();
+
+                bridge.send(crate::agent::worker::ToWorker::CompileCode(files));
+                self
             }
         }
     }

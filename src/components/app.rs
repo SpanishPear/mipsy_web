@@ -9,7 +9,7 @@ use crate::{
     setup_splits, SplitContainer,
 };
 use bounce::{use_atom, use_slice};
-use gloo_worker::Spawnable;
+use gloo_worker::{Spawnable, WorkerBridge};
 use js_sys::Promise;
 use stylist::{css, yew::styled_component};
 use wasm_bindgen_futures::{spawn_local, JsFuture};
@@ -34,23 +34,28 @@ pub fn app() -> Html {
         (),
     );
 
-    let bridge = MipsyWebWorker::spawner()
-        .callback(move |m| {
-            // this runs in the main browser thread
-            // and does not block the web worker
-            log::info!("received message from worker: {:?}", m);
-        })
-        .spawn("/worker.js");
-
-    spawn_local(async move {
-        bridge.send(crate::agent::worker::ToWorker::Ping);
-        // We need to hold the bridge until the worker resolves.
-        let promise = Promise::new(&mut |_, _| {});
-        let a = JsFuture::from(promise).await;
-        //TODO: use channels to send messages/await
-        // responses from the worker
-        log::error!("{:?}", a);
+    let bridge: UseStateHandle<WorkerBridge<MipsyWebWorker>> = use_state(|| {
+        MipsyWebWorker::spawner()
+            .callback(move |m| {
+                // this runs in the main browser thread
+                // and does not block the web worker
+                log::info!("received message from worker: {:?}", m);
+            })
+            .spawn("/worker.js")
     });
+
+    {
+        let bridge = bridge.clone();
+        spawn_local(async move {
+            bridge.send(crate::agent::worker::ToWorker::Ping);
+            // We need to hold the bridge until the worker resolves.
+            let promise = Promise::new(&mut |_, _| {});
+            let a = JsFuture::from(promise).await;
+            //TODO: use channels to send messages/await
+            // responses from the worker
+            log::error!("{:?}", a);
+        });
+    }
 
     let files = use_slice::<FileList>();
     use_effect_with_deps(
@@ -64,7 +69,7 @@ pub fn app() -> Html {
                     "main.s".into(),
                     include_str!("../main.s").into(),
                 ));
-                files.dispatch(FileListAction::ToggleCompile(0))
+                files.dispatch(FileListAction::ToggleCompile(0));
             });
 
             || ()
@@ -73,6 +78,7 @@ pub fn app() -> Html {
     );
 
     html! {
+        <ContextProvider<WorkerBridge<MipsyWebWorker>> context={(*bridge).clone()}>
         <AppContainer>
             <ResizableLayout
                 menu_container={{ html_nested! {
@@ -87,6 +93,7 @@ pub fn app() -> Html {
             >
             </ResizableLayout>
         </AppContainer>
+        </ContextProvider<WorkerBridge<MipsyWebWorker>>>
     }
 }
 

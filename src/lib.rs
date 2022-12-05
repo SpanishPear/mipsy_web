@@ -1,6 +1,7 @@
 #![allow(clippy::let_unit_value)]
 pub mod agent;
 pub mod components;
+pub mod config;
 pub mod editor;
 pub mod indexdb_fs;
 use bounce::Atom;

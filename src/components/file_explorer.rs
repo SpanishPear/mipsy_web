@@ -1,7 +1,6 @@
-use crate::components::app::MipsyCodeEditorLink;
-use crate::components::new_file_button::NewFileButton;
-use crate::components::open_files_button::OpenFilesButton;
+use crate::components::{new_file_button::NewFileButton, open_files_button::OpenFilesButton};
 use crate::editor::files::{FileList, FileListAction};
+use crate::editor::MipsyCodeEditorLink;
 use bounce::{use_atom, use_slice, use_slice_dispatch};
 use stylist::yew::styled_component;
 use yew::prelude::*;

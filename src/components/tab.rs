@@ -2,9 +2,10 @@ use bounce::{use_atom, use_slice};
 use stylist::yew::styled_component;
 use yew::prelude::*;
 
-use crate::components::app::MipsyCodeEditorLink;
-use crate::editor::files::FileList;
-use crate::editor::files::FileListAction;
+use crate::editor::{
+    files::{FileList, FileListAction},
+    MipsyCodeEditorLink,
+};
 
 use super::tab_container::UriEq;
 

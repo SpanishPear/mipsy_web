@@ -1,5 +1,7 @@
-use crate::components::secondary_panel::{PanelType, SecondaryPanel};
-use crate::{toggle_secondary_pane, SplitContainer};
+use crate::{
+    components::secondary_panel::{PanelType, SecondaryPanel},
+    toggle_secondary_pane, SplitContainer,
+};
 use bounce::use_atom;
 use stylist::yew::styled_component;
 use yew::prelude::*;

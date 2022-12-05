@@ -1,6 +1,5 @@
-use crate::components::app::MipsyCodeEditorLink;
 use crate::components::tab_container::TabContainer;
-use crate::editor::get_options;
+use crate::editor::{get_options, MipsyCodeEditorLink};
 use bounce::use_atom;
 use monaco::yew::CodeEditor;
 use stylist::yew::styled_component;

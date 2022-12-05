@@ -1,23 +1,19 @@
-use crate::agent::MipsyWebWorker;
-use crate::editor::files::{FileList, FileListAction};
 use crate::{
+    agent::MipsyWebWorker,
     components::{layout::ResizableLayout, menubar::MenuBar},
-    editor::component::Editor,
+    editor::{
+        component::Editor,
+        files::{FileList, FileListAction},
+        MipsyCodeEditorLink,
+    },
+    setup_splits, SplitContainer,
 };
-use crate::{setup_splits, SplitContainer};
-use bounce::{use_atom, use_slice, Atom};
+use bounce::{use_atom, use_slice};
 use gloo_worker::Spawnable;
 use js_sys::Promise;
-use monaco::yew::CodeEditorLink;
-use stylist::css;
-use stylist::yew::styled_component;
+use stylist::{css, yew::styled_component};
 use wasm_bindgen_futures::{spawn_local, JsFuture};
 use yew::prelude::*;
-
-#[derive(Atom, Default, Debug, Clone, PartialEq)]
-pub struct MipsyCodeEditorLink {
-    pub link: CodeEditorLink,
-}
 
 #[styled_component(App)]
 pub fn app() -> Html {

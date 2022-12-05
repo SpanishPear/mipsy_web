@@ -1,9 +1,9 @@
+use crate::editor::MipsyCodeEditorLink;
 use std::rc::Rc;
 
 use bounce::{Slice, UseAtomHandle};
 use yew::Reducible;
 
-use crate::components::app::MipsyCodeEditorLink;
 use crate::components::tab_container::UriEq;
 
 #[derive(Debug, Clone, PartialEq, Eq)]

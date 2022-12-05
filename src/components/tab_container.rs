@@ -1,5 +1,4 @@
-use crate::components::tab::Tab;
-use crate::editor::files::FileList;
+use crate::{components::tab::Tab, editor::files::FileList};
 use bounce::prelude::*;
 use std::ops::Deref;
 use stylist::yew::styled_component;

@@ -1,7 +1,6 @@
 use crate::components::app::{EditorContainer, MenuContainer, RuntimeContainer};
 use stylist::yew::styled_component;
-use yew::prelude::*;
-use yew::virtual_dom::VChild;
+use yew::{prelude::*, virtual_dom::VChild};
 
 #[derive(Properties, PartialEq)]
 pub struct ResizableLayoutProps {

@@ -18,6 +18,9 @@ impl PanelType {
             PanelType::Debug => "Debug".to_string(),
         }
     }
+    pub fn id(&self) -> String {
+        self.title().to_lowercase()
+    }
 }
 
 impl From<PanelType> for Html {

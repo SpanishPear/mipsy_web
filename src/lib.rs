@@ -7,6 +7,7 @@ pub mod indexdb_fs;
 use bounce::Atom;
 use js_sys::{Object, Reflect};
 use wasm_bindgen::{prelude::*, JsCast};
+use yew::UseStateHandle;
 
 //TODO: create a SplitJs rust binding
 #[wasm_bindgen]
@@ -61,17 +62,20 @@ pub fn setup_splits() -> JsValue {
 /// it opens the panel.
 ///
 /// Done via a callback to the SplitJs handle
-pub fn toggle_secondary_pane(split_handle: &JsValue, showing: bool) {
+pub fn toggle_secondary_pane(split_handle: &JsValue, showing: UseStateHandle<bool>) {
     let set_sizes_fn = Reflect::get(split_handle, &JsValue::from("setSizes"))
         .unwrap()
         .dyn_into::<js_sys::Function>()
         .unwrap();
 
-    let values = if !showing {
+    let values = if !*showing {
         js_sys::Array::of3(&JsValue::from(10), &JsValue::from(40), &JsValue::from(50))
     } else {
         js_sys::Array::of3(&JsValue::from(3), &JsValue::from(47), &JsValue::from(50))
     };
+
+    // flip the state determining if panel is showing
+    showing.set(!(*showing));
 
     // call the setSizes Function
     let _resize = set_sizes_fn.call1(split_handle, &values).unwrap();

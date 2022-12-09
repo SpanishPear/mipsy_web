@@ -24,6 +24,7 @@ pub fn app() -> Html {
     let split_container = use_atom::<SplitContainer>();
     use_effect_with_deps(
         move |_| {
+            log::debug!("running setup_splits");
             let container = SplitContainer {
                 handle: setup_splits(),
             };
@@ -60,6 +61,7 @@ pub fn app() -> Html {
     let files = use_slice::<FileList>();
     use_effect_with_deps(
         move |_| {
+            log::debug!("setting initial main.s content");
             code_editor_link.link.with_editor(|editor| {
                 let model = editor.get_model().expect("editor has no model");
 

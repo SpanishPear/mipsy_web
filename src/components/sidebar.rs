@@ -17,10 +17,11 @@ pub fn render() -> Html {
         let split_handle = use_atom::<SplitContainer>();
         let panel_type = panel_type.clone();
         Callback::from(move |_| {
-            toggle_secondary_pane(&split_handle.handle, *show_secondary_panel);
+            if panel_val == *panel_type || !*show_secondary_panel {
+                toggle_secondary_pane(&split_handle.handle, show_secondary_panel.clone());
+            }
             let panel_val = panel_val.clone();
             panel_type.set(panel_val);
-            show_secondary_panel.set(!(*show_secondary_panel));
         })
     };
 
@@ -36,8 +37,10 @@ pub fn render() -> Html {
                 {
                     for PanelType::iter().map(|panel_type| {
                         let panel_type = panel_type.clone();
+                        let id = format!("{}-sidebar-button", panel_type.id());
                         html! {
                             <label tabindex=0
+                                {id}
                                 title={panel_type.title()}
                                 onclick={onclick(panel_type.clone())}
                                 class={css!(r#"

@@ -1,19 +1,21 @@
-use crate::components::file_explorer::FileExplorer;
+use crate::components::{debug_pane::DebugPane, file_explorer::FileExplorer};
 use stylist::yew::styled_component;
 use yew::prelude::*;
 
 #[derive(Clone, PartialEq, Eq)]
 pub enum PanelType {
     FileExplorer,
+    Debug,
 }
 
 impl PanelType {
     pub fn iter() -> impl Iterator<Item = PanelType> {
-        vec![PanelType::FileExplorer].into_iter()
+        vec![PanelType::FileExplorer, PanelType::Debug].into_iter()
     }
     pub fn title(&self) -> String {
         match self {
             PanelType::FileExplorer => "File Explorer".to_string(),
+            PanelType::Debug => "Debug".to_string(),
         }
     }
 }
@@ -23,6 +25,9 @@ impl From<PanelType> for Html {
         match panel_type {
             PanelType::FileExplorer => html! {
                 <FileExplorer />
+            },
+            PanelType::Debug => html! {
+                <DebugPane />
             },
         }
     }

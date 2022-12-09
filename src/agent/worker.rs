@@ -1,3 +1,5 @@
+use super::state::BinaryRuntimeState;
+use crate::agent::state::ErrorResponseData;
 use crate::config::MipsyWebConfig;
 use crate::editor::EditorFile;
 use gloo_worker::{HandlerId, Worker, WorkerScope};
@@ -10,6 +12,7 @@ use serde::{Deserialize, Serialize};
 pub struct MipsyWebWorker {
     config: MipsyWebConfig,
     inst_set: mipsy_lib::InstSet,
+    binary_runtime_state: Option<BinaryRuntimeState>,
 }
 
 /// The type that a worker
@@ -31,6 +34,7 @@ enum Message {
 #[derive(Serialize, Deserialize, Debug)]
 pub enum FromWorker {
     Pong(String),
+    Error(ErrorResponseData),
 }
 
 impl Worker for MipsyWebWorker {
@@ -42,6 +46,7 @@ impl Worker for MipsyWebWorker {
         Self {
             config: MipsyWebConfig::default(),
             inst_set: mipsy_instructions::inst_set(),
+            binary_runtime_state: None,
         }
     }
 
@@ -69,7 +74,52 @@ impl Worker for MipsyWebWorker {
                 let compiled =
                     mipsy_lib::compile(&self.inst_set, files, &CompilerOptions::default(), config);
 
-                log::debug!("compiled: {:#?}", compiled);
+                match compiled {
+                    Ok(binary) => {
+                        /*let decompiled = decompile(&binary, &self.inst_set, Some(file.clone()));
+                        let response = Self::Output::DecompiledCode(DecompiledResponse {
+                            decompiled,
+                            file: Some(file.clone()),
+                            binary: binary.to_owned(),
+                        });
+                        let runtime = mipsy_lib::runtime(&binary, &[]);
+                        self.binary = Some(binary);
+                        self.runtime = Some(RuntimeState::Running(runtime));
+                        self.file = Some(file);
+                        self.link.respond(id, response)
+                        */
+                    }
+
+                    Err(error_type) => {
+                        self.binary_runtime_state = None;
+                        let error_msg = match error_type {
+                            mipsy_lib::MipsyError::Compiler(ref compiler_err) => {
+                                log::info!("compiler error: {:#?}", compiler_err);
+                                /*format!(
+                                    "{}\n{}\n{}",
+                                    generate_highlighted_line(file.clone(), compiler_err),
+                                    compiler_err.error().message(),
+                                    compiler_err.error().tips().join("\n")
+                                )*/
+                                "".to_string()
+                            }
+                            mipsy_lib::MipsyError::Parser(_) => String::from("failed to parse"),
+                            mipsy_lib::MipsyError::Runtime(_) => {
+                                unreachable!(
+                                    "runtime error should not be possible at compile time"
+                                );
+                            }
+                        };
+                        scope.respond(
+                            id,
+                            Self::Output::Error(ErrorResponseData {
+                                error_type,
+                                file_name: "".to_string(),
+                                message: error_msg,
+                            }),
+                        )
+                    }
+                }
             }
         }
     }

@@ -1,6 +1,6 @@
 use crate::{
     agent::worker::MipsyWebWorker,
-    components::{layout::ResizableLayout, menubar::MenuBar},
+    components::{layout::ResizableLayout, sidebar::SideBar},
     editor::{
         component::Editor,
         files::{FileList, FileListAction},
@@ -126,7 +126,7 @@ pub fn menu_container() -> Html {
             width: 100%;
             height: 100%;
         "#)}>
-           <MenuBar />
+           <SideBar />
         </div>
     }
 }

@@ -89,7 +89,7 @@ fn from(
         uri,
         is_selected,
     }: &TabProps,
-) -> Self {
+) -> Html {
     let editor_link = use_atom::<MipsyCodeEditorLink>();
     let files = use_slice::<FileList>();
 

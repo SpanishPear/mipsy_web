@@ -38,5 +38,5 @@ fn main() {
             .with(perf_layer)
             .init(); // Install these as subscribers to tracing events
     }
-    yew::start_app::<AppRoot>();
+    yew::Renderer::<AppRoot>::new().render();
 }

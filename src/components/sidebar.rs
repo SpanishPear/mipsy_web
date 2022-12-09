@@ -10,12 +10,13 @@ use yew::prelude::*;
 pub fn render() -> Html {
     let show_secondary_panel = use_state_eq(|| false);
     let panel_type = use_state_eq(|| PanelType::FileExplorer);
+    let split_handle = use_atom::<SplitContainer>();
 
     // onclick to toggle the secondary panel
     let onclick = |panel_val: PanelType| {
         let show_secondary_panel = show_secondary_panel.clone();
-        let split_handle = use_atom::<SplitContainer>();
         let panel_type = panel_type.clone();
+        let split_handle = split_handle.clone();
         Callback::from(move |_| {
             if panel_val == *panel_type || !*show_secondary_panel {
                 toggle_secondary_pane(&split_handle.handle, show_secondary_panel.clone());

@@ -13,7 +13,7 @@ pub struct EditorProps {
 
 #[styled_component(Editor)]
 pub fn editor(EditorProps { styles }: &EditorProps) -> Html {
-    let styles: StyleSource = styles.as_str().into();
+    let styles: StyleSource = styles.as_str().try_into().unwrap();
 
     let link = use_atom::<MipsyCodeEditorLink>();
 

@@ -213,7 +213,7 @@ impl Reducible for FileList {
                     .map(|i| self.files[*i].clone().into())
                     .collect::<Vec<_>>();
 
-                bridge.send(crate::agent::worker::ToWorker::CompileCode(files));
+                bridge.send(crate::agent::ToWorker::CompileCode(files));
                 self
             }
         }

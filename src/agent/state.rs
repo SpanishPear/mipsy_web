@@ -16,10 +16,3 @@ pub enum RuntimeState {
     WaitingString(Guard<Vec<u8>>),
     WaitingChar(Guard<u8>),
 }
-
-#[derive(Serialize, Deserialize, Debug)]
-pub struct ErrorResponseData {
-    pub error_type: mipsy_lib::MipsyError,
-    pub file_name: String,
-    pub message: String,
-}

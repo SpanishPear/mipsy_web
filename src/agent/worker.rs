@@ -1,11 +1,12 @@
+use super::communication::{FromWorker, ToWorker};
 use super::state::BinaryRuntimeState;
-use crate::agent::state::ErrorResponseData;
+use crate::agent::communication::{DecompiledResponseData, ErrorResponseData};
+use crate::agent::mipsy_glue;
+use crate::agent::state::RuntimeState;
 use crate::config::MipsyWebConfig;
-use crate::editor::EditorFile;
 use gloo_worker::{HandlerId, Worker, WorkerScope};
 use mipsy_lib::compile::CompilerOptions;
 use mipsy_parser::TaggedFile;
-use serde::{Deserialize, Serialize};
 
 /// A struct containing
 /// state for the Worker
@@ -15,26 +16,10 @@ pub struct MipsyWebWorker {
     binary_runtime_state: Option<BinaryRuntimeState>,
 }
 
-/// The type that a worker
-/// can receive
-#[derive(Serialize, Deserialize, Debug)]
-pub enum ToWorker {
-    Ping,
-    CompileCode(Vec<EditorFile>),
-}
-
 /// Used for internal messaging
 #[allow(dead_code)]
 enum Message {
     Pong,
-}
-
-/// The type that a Worker
-/// can send back
-#[derive(Serialize, Deserialize, Debug)]
-pub enum FromWorker {
-    Pong(String),
-    Error(ErrorResponseData),
 }
 
 impl Worker for MipsyWebWorker {
@@ -66,59 +51,61 @@ impl Worker for MipsyWebWorker {
             }
             ToWorker::CompileCode(files) => {
                 let config = &self.config.lib;
-                let files = files
+                let files: Vec<mipsy_parser::TaggedFile> = files
                     .iter()
                     .map(|file| TaggedFile::new(Some(&file.name), &file.content))
                     .collect::<Vec<_>>();
 
-                let compiled =
-                    mipsy_lib::compile(&self.inst_set, files, &CompilerOptions::default(), config);
+                let compiled = mipsy_lib::compile(
+                    &self.inst_set,
+                    files.clone(),
+                    &CompilerOptions::default(),
+                    config,
+                );
 
-                match compiled {
-                    Ok(binary) => {
-                        /*let decompiled = decompile(&binary, &self.inst_set, Some(file.clone()));
-                        let response = Self::Output::DecompiledCode(DecompiledResponse {
-                            decompiled,
-                            file: Some(file.clone()),
-                            binary: binary.to_owned(),
-                        });
-                        let runtime = mipsy_lib::runtime(&binary, &[]);
-                        self.binary = Some(binary);
-                        self.runtime = Some(RuntimeState::Running(runtime));
-                        self.file = Some(file);
-                        self.link.respond(id, response)
-                        */
-                    }
+                /// use if let to reduce nesting...
+                if let Ok(binary) = compiled {
+                    let decompiled = mipsy_glue::decompile(&self.inst_set, &binary, &files);
+                    let response = Self::Output::Decompiled(DecompiledResponseData {
+                        decompiled,
+                        binary: binary.to_owned(),
+                    });
 
-                    Err(error_type) => {
-                        self.binary_runtime_state = None;
-                        let error_msg = match error_type {
-                            mipsy_lib::MipsyError::Compiler(ref compiler_err) => {
-                                log::info!("compiler error: {:#?}", compiler_err);
-                                /*format!(
-                                    "{}\n{}\n{}",
-                                    generate_highlighted_line(file.clone(), compiler_err),
-                                    compiler_err.error().message(),
-                                    compiler_err.error().tips().join("\n")
-                                )*/
-                                "".to_string()
-                            }
-                            mipsy_lib::MipsyError::Parser(_) => String::from("failed to parse"),
-                            mipsy_lib::MipsyError::Runtime(_) => {
-                                unreachable!(
-                                    "runtime error should not be possible at compile time"
-                                );
-                            }
-                        };
-                        scope.respond(
-                            id,
-                            Self::Output::Error(ErrorResponseData {
-                                error_type,
-                                file_name: "".to_string(),
-                                message: error_msg,
-                            }),
-                        )
-                    }
+                    // create a new runtime from the given binary
+                    let runtime = mipsy_lib::runtime(&binary, &[]);
+                    let runtime_state = BinaryRuntimeState {
+                        // store the runtime on the heap, so it doesnt get huge enum
+                        runtime: RuntimeState::Running(Box::new(runtime)),
+                        binary,
+                    };
+                    self.binary_runtime_state = Some(runtime_state);
+                    scope.respond(id, response)
+                } else if let Err(error_type) = compiled {
+                    self.binary_runtime_state = None;
+                    let error_msg = match error_type {
+                        mipsy_lib::MipsyError::Compiler(ref compiler_err) => {
+                            log::info!("compiler error: {:#?}", compiler_err);
+                            /*format!(
+                                "{}\n{}\n{}",
+                                generate_highlighted_line(file.clone(), compiler_err),
+                                compiler_err.error().message(),
+                                compiler_err.error().tips().join("\n")
+                            )*/
+                            "".to_string()
+                        }
+                        mipsy_lib::MipsyError::Parser(_) => String::from("failed to parse"),
+                        mipsy_lib::MipsyError::Runtime(_) => {
+                            unreachable!("runtime error should not be possible at compile time");
+                        }
+                    };
+                    scope.respond(
+                        id,
+                        Self::Output::Error(ErrorResponseData {
+                            error_type,
+                            file_name: "".to_string(),
+                            message: error_msg,
+                        }),
+                    )
                 }
             }
         }

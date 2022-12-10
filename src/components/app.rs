@@ -48,7 +48,7 @@ pub fn app() -> Html {
     {
         let bridge = bridge.clone();
         spawn_local(async move {
-            bridge.send(crate::agent::worker::ToWorker::Ping);
+            bridge.send(crate::agent::ToWorker::Ping);
             // We need to hold the bridge until the worker resolves.
             let promise = Promise::new(&mut |_, _| {});
             let a = JsFuture::from(promise).await;

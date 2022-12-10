@@ -63,7 +63,7 @@ impl Worker for MipsyWebWorker {
                     config,
                 );
 
-                /// use if let to reduce nesting...
+                // use if let to reduce nesting...
                 if let Ok(binary) = compiled {
                     let decompiled = mipsy_glue::decompile(&self.inst_set, &binary, &files);
                     let response = Self::Output::Decompiled(DecompiledResponseData {

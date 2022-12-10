@@ -25,9 +25,9 @@ tracing-subscriber = { version = "*", features = ["time"] }
 time = { version = "*", features = ["wasm-bindgen"] }
 wasm-logger = "0.2.0"
 gloo = { version = "0.8.0", features = ["futures"] }
-mipsy_utils = { git = "https://github.com/insou22/mipsy" }
-mipsy_lib = { git = "https://github.com/insou22/mipsy" }
-mipsy_parser = { git = "https://github.com/insou22/mipsy" }
-mipsy_instructions = { git = "https://github.com/insou22/mipsy" , features = ["rt_yaml"] } 
+mipsy_utils = { git = "https://github.com/spanishpear/mipsy"  }
+mipsy_lib = { git = "https://github.com/spanishpear/mipsy" }
+mipsy_parser = { git = "https://github.com/spanishpear/mipsy" }
+mipsy_instructions = { git = "https://github.com/spanishpear/mipsy"  , features = ["rt_yaml"] } 
 
 

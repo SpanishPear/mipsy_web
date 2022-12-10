@@ -721,7 +721,7 @@ checksum = "68354c5c6bd36d73ff3feceb05efa59b6acb7626617f4962be322a825e61f79a"
 [[package]]
 name = "mipsy_instructions"
 version = "0.1.0"
-source = "git+https://github.com/insou22/mipsy#b3041900db283638403465aa5dd4057ea7dc004c"
+source = "git+https://github.com/spanishpear/mipsy#3fc4db663d06c19e4a885ac4567647b3c7a6a431"
 dependencies = [
  "mipsy_lib",
  "serde",
@@ -731,7 +731,7 @@ dependencies = [
 [[package]]
 name = "mipsy_lib"
 version = "0.1.0"
-source = "git+https://github.com/insou22/mipsy#b3041900db283638403465aa5dd4057ea7dc004c"
+source = "git+https://github.com/spanishpear/mipsy#3fc4db663d06c19e4a885ac4567647b3c7a6a431"
 dependencies = [
  "colored",
  "linked-hash-map",
@@ -747,7 +747,7 @@ dependencies = [
 [[package]]
 name = "mipsy_parser"
 version = "0.1.0"
-source = "git+https://github.com/insou22/mipsy#b3041900db283638403465aa5dd4057ea7dc004c"
+source = "git+https://github.com/spanishpear/mipsy#3fc4db663d06c19e4a885ac4567647b3c7a6a431"
 dependencies = [
  "nom",
  "nom_locate",
@@ -758,7 +758,7 @@ dependencies = [
 [[package]]
 name = "mipsy_utils"
 version = "0.1.0"
-source = "git+https://github.com/insou22/mipsy#b3041900db283638403465aa5dd4057ea7dc004c"
+source = "git+https://github.com/spanishpear/mipsy#3fc4db663d06c19e4a885ac4567647b3c7a6a431"
 dependencies = [
  "dirs",
  "serde",
@@ -800,7 +800,7 @@ dependencies = [
 [[package]]
 name = "monaco"
 version = "0.3.0"
-source = "git+https://github.com/siku2/rust-monaco#7a4b358196922a67a4950a4f372a9962d0366736"
+source = "git+https://github.com/siku2/rust-monaco#6daaa5b743b1bcaa49c9522e01fedb709fc3fff3"
 dependencies = [
  "js-sys",
  "paste",

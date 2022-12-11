@@ -1,9 +1,10 @@
 use stylist::yew::styled_component;
-use stylist::{Style};
+use stylist::Style;
 use yew::prelude::*;
 use yew::virtual_dom::VChild;
 
-use crate::components::app::{DataContainer, DecompiledContainer, EditorContainer};
+use crate::components::app::{DataContainer, EditorContainer};
+use crate::components::decompiled_container::DecompiledContainer;
 
 #[derive(Properties, PartialEq, Debug, Clone)]
 pub struct ThreeTabSwitcherProps {

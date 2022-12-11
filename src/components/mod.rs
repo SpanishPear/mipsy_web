@@ -1,6 +1,8 @@
 pub mod app;
 pub mod debug_pane;
+pub mod decompiled_container;
 pub mod file_explorer;
+pub mod icons;
 pub mod layout;
 pub mod new_file_button;
 pub mod open_files_button;

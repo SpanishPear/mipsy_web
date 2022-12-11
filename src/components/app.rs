@@ -1,6 +1,9 @@
 use crate::{
     agent::{worker::MipsyWebWorker, FromWorker},
-    components::{layout::ThreeColResizable, layout::ThreeTabSwitcher, sidebar::SideBar},
+    components::{
+        decompiled_container::DecompiledContainer, layout::ThreeColResizable,
+        layout::ThreeTabSwitcher, sidebar::SideBar,
+    },
     editor::{
         component::Editor,
         files::{FileList, FileListAction},
@@ -172,13 +175,6 @@ pub fn runtime_container() -> Html {
         "#)}>
             {"runtime"}
         </div>
-    }
-}
-
-#[styled_component(DecompiledContainer)]
-pub fn decompiled() -> Html {
-    html! {
-         <>{"decompiled"}</>
     }
 }
 

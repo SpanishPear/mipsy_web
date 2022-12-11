@@ -20,6 +20,8 @@ pub fn data() -> Html {
 
 #[derive(Properties, PartialEq, Debug, Clone)]
 pub struct ThreeTabSwitcherProps {
+    pub editor_container: VChild<EditorContainer>,
+    pub decompiled_container: VChild<DecompiledContainer>,
     pub data_container: VChild<DataContainer>,
 }
 

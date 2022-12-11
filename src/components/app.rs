@@ -1,7 +1,7 @@
 use crate::{
     agent::worker::MipsyWebWorker,
     components::{
-        layout::ResizableLayout,
+        layout::ThreeColResizable,
         sidebar::SideBar,
         three_tab_switcher::{DataContainer, DecompiledContainer, ThreeTabSwitcher},
     },
@@ -86,11 +86,8 @@ pub fn app() -> Html {
     html! {
         <ContextProvider<WorkerBridge<MipsyWebWorker>> context={(*bridge).clone()}>
         <AppContainer>
-            <ResizableLayout
-                menu_container={{ html_nested! {
+            <ThreeColResizable>
                     <MenuContainer />
-                }}}
-                three_tab_switcher={{ html_nested!{
                     <ThreeTabSwitcher
                         editor_container={{ html_nested!{
                             <EditorContainer />
@@ -102,12 +99,8 @@ pub fn app() -> Html {
                             <DataContainer />
                         }}}
                     />
-                }}}
-                runtime_container={{html_nested!{
                     <RuntimeContainer />
-                }}}
-            >
-            </ResizableLayout>
+            </ThreeColResizable>
         </AppContainer>
         </ContextProvider<WorkerBridge<MipsyWebWorker>>>
     }

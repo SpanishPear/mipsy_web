@@ -9,4 +9,3 @@ pub mod secondary_panel;
 pub mod sidebar;
 pub mod tab;
 pub mod tab_container;
-pub mod three_tab_switcher;

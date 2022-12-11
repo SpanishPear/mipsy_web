@@ -1,5 +1,4 @@
 use mipsy_lib::Binary;
-use serde::{Deserialize, Serialize};
 
 pub struct BinaryRuntimeState {
     pub binary: Binary,

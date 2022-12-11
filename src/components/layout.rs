@@ -1,11 +1,13 @@
-use crate::components::app::{EditorContainer, MenuContainer, RuntimeContainer};
+use crate::components::app::{MenuContainer, RuntimeContainer};
 use stylist::yew::styled_component;
 use yew::{prelude::*, virtual_dom::VChild};
+
+use super::three_tab_switcher::ThreeTabSwitcher;
 
 #[derive(Properties, PartialEq)]
 pub struct ResizableLayoutProps {
     pub menu_container: VChild<MenuContainer>,
-    pub editor_container: VChild<EditorContainer>,
+    pub three_tab_switcher: VChild<ThreeTabSwitcher>,
     pub runtime_container: VChild<RuntimeContainer>,
 }
 
@@ -31,7 +33,7 @@ pub fn resizable_layout(props: &ResizableLayoutProps) -> Html {
 
                 <div class={css!(r#"
                 "#)} id="middle">
-                    {props.editor_container.clone()}
+                    {props.three_tab_switcher.clone()}
                 </div>
 
                 <div class={css!(r#"

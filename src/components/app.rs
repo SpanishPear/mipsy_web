@@ -1,6 +1,10 @@
 use crate::{
     agent::worker::MipsyWebWorker,
-    components::{layout::ResizableLayout, sidebar::SideBar},
+    components::{
+        layout::ResizableLayout,
+        sidebar::SideBar,
+        three_tab_switcher::{DataContainer, DecompiledContainer, ThreeTabSwitcher},
+    },
     editor::{
         component::Editor,
         files::{FileList, FileListAction},
@@ -86,8 +90,18 @@ pub fn app() -> Html {
                 menu_container={{ html_nested! {
                     <MenuContainer />
                 }}}
-                editor_container={{ html_nested!{
-                    <EditorContainer />
+                three_tab_switcher={{ html_nested!{
+                    <ThreeTabSwitcher
+                        editor_container={{ html_nested!{
+                            <EditorContainer />
+                        }}}
+                        decompiled_container={{ html_nested!{
+                            <DecompiledContainer />
+                        }}}
+                        data_container={{ html_nested!{
+                            <DataContainer />
+                        }}}
+                    />
                 }}}
                 runtime_container={{html_nested!{
                     <RuntimeContainer />

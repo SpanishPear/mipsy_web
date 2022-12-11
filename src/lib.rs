@@ -4,6 +4,7 @@ pub mod components;
 pub mod config;
 pub mod editor;
 pub mod indexdb_fs;
+pub mod state;
 use bounce::Atom;
 use js_sys::{Object, Reflect};
 use wasm_bindgen::{prelude::*, JsCast};

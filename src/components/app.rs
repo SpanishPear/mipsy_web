@@ -1,12 +1,14 @@
 use crate::{
-    agent::worker::MipsyWebWorker,
+    agent::{worker::MipsyWebWorker, FromWorker},
     components::{layout::ThreeColResizable, layout::ThreeTabSwitcher, sidebar::SideBar},
     editor::{
         component::Editor,
         files::{FileList, FileListAction},
         MipsyCodeEditorLink,
     },
-    setup_splits, SplitContainer,
+    setup_splits,
+    state::State,
+    SplitContainer,
 };
 use bounce::{use_atom, use_slice};
 use gloo_worker::{Spawnable, WorkerBridge};
@@ -35,12 +37,23 @@ pub fn app() -> Html {
         (),
     );
 
+    let state = use_atom::<State>();
     let bridge: UseStateHandle<WorkerBridge<MipsyWebWorker>> = use_state(|| {
         MipsyWebWorker::spawner()
             .callback(move |m| {
                 // this runs in the main browser thread
                 // and does not block the web worker
-                log::info!("received message from worker: {:?}", m);
+                log::debug!("received message from worker: {:?}", m);
+                match m {
+                    FromWorker::Decompiled(response) => {
+                        // we have decompiled and binary
+                        // from succesful compilation
+                        // so set the state to a new compiled state
+                        state.set(State::new_compiled_state_from_response(response));
+                    }
+                    FromWorker::Pong(_) => {}
+                    _ => {}
+                }
             })
             .spawn("/worker.js")
     });

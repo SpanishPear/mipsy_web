@@ -1,3 +1,4 @@
+use bounce::use_atom;
 use stylist::yew::styled_component;
 use stylist::Style;
 use yew::prelude::*;
@@ -5,6 +6,7 @@ use yew::virtual_dom::VChild;
 
 use crate::components::app::{DataContainer, EditorContainer};
 use crate::components::decompiled_container::DecompiledContainer;
+use crate::state::State;
 
 #[derive(Properties, PartialEq, Debug, Clone)]
 pub struct ThreeTabSwitcherProps {
@@ -35,6 +37,16 @@ pub fn three_tab_switcher(
         })
     };
 
+    let binary_exists = use_atom::<State>();
+    let binary_exists = !matches!(*binary_exists, State::NoBinary);
+    let is_disabled = |index| {
+        if index != 0 {
+            !binary_exists
+        } else {
+            false
+        }
+    };
+
     // Note - this cannot be a separate function
     // or the Style is dropped
     let button_classes = |index| {
@@ -50,6 +62,7 @@ pub fn three_tab_switcher(
             
         "#,
         );
+        let is_disabled = is_disabled(index);
 
         let style = style.unwrap();
         let second_class = Style::new(if *displayed == index {
@@ -59,7 +72,23 @@ pub fn three_tab_switcher(
         })
         .unwrap();
 
-        classes!(style, second_class)
+        if is_disabled {
+            log::info!("disabled");
+            let disabled_style = Style::new(
+                r#"
+                background-color: #e9ecef;
+                color: #6c757d;
+                &:hover {
+                    cursor: not-allowed;
+                    background-color: #e9ecef;
+                }
+            "#,
+            );
+            let disabled_style = disabled_style.unwrap();
+            classes!(style, second_class, disabled_style)
+        } else {
+            classes!(style, second_class)
+        }
     };
 
     html! {
@@ -92,6 +121,7 @@ pub fn three_tab_switcher(
                     class={button_classes(0)}
                     id="three-tab-switcher__editor"
                     onclick={click_callback(0)}
+                    disabled={is_disabled(0)}
                 >
                     {"editor"}
                 </button>
@@ -99,6 +129,7 @@ pub fn three_tab_switcher(
                     id="three-tab-switcher__decompiled"
                     onclick={click_callback(1)}
                     class={button_classes(1)}
+                    disabled={is_disabled(1)}
 
                 >
                     {"decompiled"}
@@ -107,6 +138,7 @@ pub fn three_tab_switcher(
                     id="three-tab-switcher__data"
                     onclick={click_callback(2)}
                     class={button_classes(2)}
+                    disabled={is_disabled(2)}
                 >
                     {"data"}
                 </button>

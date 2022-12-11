@@ -1,5 +1,5 @@
 use stylist::yew::styled_component;
-use stylist::{Style, StyleSource};
+use stylist::{Style};
 use yew::prelude::*;
 use yew::virtual_dom::VChild;
 

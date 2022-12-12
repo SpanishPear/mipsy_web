@@ -20,7 +20,7 @@ jobs:
         target: wasm32-unknown-unknown
     
     - name: trunk-action
-      uses: jetli/trunk-action@v0.1.0
+      uses: jetli/trunk-action@v0.2.0
 
     - name: run trunk
       # because github pages serves repositories at /repo_name/ lets tell trunk that

@@ -13,10 +13,10 @@ use crate::{
         MipsyCodeEditorLink,
     },
     setup_splits,
-    state::State,
+    state::app::{State, StateAction},
     SplitContainer,
 };
-use bounce::{use_atom, use_slice};
+use bounce::{use_atom, use_slice, use_slice_dispatch};
 use gloo_worker::{Spawnable, WorkerBridge};
 use js_sys::Promise;
 use stylist::yew::styled_component;
@@ -43,7 +43,7 @@ pub fn app() -> Html {
         (),
     );
 
-    let state = use_atom::<State>();
+    let state_dispatch = use_slice_dispatch::<State>();
     let bridge: UseStateHandle<WorkerBridge<MipsyWebWorker>> = use_state(|| {
         MipsyWebWorker::spawner()
             .callback(move |m| {
@@ -55,7 +55,7 @@ pub fn app() -> Html {
                         // we have decompiled and binary
                         // from succesful compilation
                         // so set the state to a new compiled state
-                        state.set(State::new_compiled_state_from_response(response));
+                        state_dispatch(StateAction::InitialiseFromDecompiled(response));
                     }
                     FromWorker::Pong(_) => {}
                     _ => {}

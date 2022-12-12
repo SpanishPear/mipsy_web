@@ -1,13 +1,14 @@
-use bounce::use_atom;
+use bounce::use_slice_value;
 use stylist::yew::styled_component;
 use yew::prelude::*;
 
 use crate::components::icons::{StopIconFilled, StopIconOutline};
-use crate::state::{ErrorType, State};
+use crate::state::app::State;
+use crate::state::error::ErrorType;
 
 #[styled_component(DecompiledContainer)]
 pub fn data() -> Html {
-    let state = use_atom::<State>();
+    let state = use_slice_value::<State>();
 
     // get the raw decompiled text, and the current instruction (PC)
     let (decompiled, current_instr) = match *state {
@@ -29,138 +30,140 @@ pub fn data() -> Html {
             <table>
             { html! {
                 for decompiled.as_str().split('\n').into_iter().map(|item| {
+
+                    // add a &nbsp; if newline
                     if item.is_empty() {
-                        // this is &nbsp;
-                        html! {
+                        return html! {
                             <tr>{"\u{00a0}"}</tr>
                         }
                     }
-                    else {
-                        // the actual hex address lives from 2-10, 01 are 0x
-                        let source_instr = if item.starts_with("0x") {
-                            Some(u32::from_str_radix(&item[2..10], 16).unwrap_or(0))
-                        } else {
-                            None
-                        };
-                        let should_highlight = if let Some(source_instr) = source_instr {
-                            source_instr == current_instr
-                        } else {
-                            false
-                        };
-                        let current_is_breakpoint = match &*state {
-                            State::NoBinary => unreachable!("cannot have decompiled if no file"),
-                            State::Error(error_type) => {
-                                if let ErrorType::RuntimeError(_error) = error_type {
-                                    false
-                                } else {
-                                    unreachable!("Error in decompiled not possible if not compiled");
-                                }
-                            },
-                            State::Compiled(curr) => {
-                                let binary = curr.mipsy_internal_state.binary.as_ref().expect("binary must exist");
-                                let addr = if let Some(source_instr) = source_instr {
-                                    source_instr
-                                } else {
-                                    binary.get_label(&item.trim().replace(':', "")).expect("label must exist")
-                                };
-                                binary.breakpoints.contains_key(&addr)
+
+                    // the actual hex address lives from 2-10, 01 are 0x
+                    let source_instr = if item.starts_with("0x") {
+                        Some(u32::from_str_radix(&item[2..10], 16).unwrap_or(0))
+                    } else {
+                        None
+                    };
+                    let should_highlight = if let Some(source_instr) = source_instr {
+                        source_instr == current_instr
+                    } else {
+                        false
+                    };
+
+                    let current_is_breakpoint = match state.as_ref() {
+                        State::NoBinary => unreachable!("cannot have decompiled if no file"),
+                        State::Error(error_type) => {
+                            if let ErrorType::RuntimeError(_error) = error_type {
+                                false
+                            } else {
+                                unreachable!("Error in decompiled not possible if not compiled");
                             }
+                        },
+                        State::Compiled(curr) => {
+                            let binary = curr.mipsy_internal_state.binary.as_ref().expect("binary must exist");
+                            let addr = if let Some(source_instr) = source_instr {
+                                source_instr
+                            } else {
+                                binary.get_label(&item.trim().replace(':', "")).expect("label must exist")
+                            };
+                            binary.breakpoints.contains_key(&addr)
+                        }
 
-                        };
+                    };
 
-                        let toggle_breakpoint = {
-                            let item = String::from(item);
-                            // let worker = props.worker.clone();
-                            let state = state.clone();
-                            Callback::from(move |_| {
-                                match &*state {
-                                    State::NoBinary=> unreachable!(),
-                                    State::Error(error_type) =>  {
-                                        if let ErrorType::RuntimeError(error) = error_type {
-                                            let binary = error.mips_state.binary.as_ref().expect("binary must exist");
-                                            let addr = if let Some(source_instr) = source_instr {
-                                                source_instr
-                                            } else {
-                                                binary.get_label(&item.trim().replace(':', "")).expect("label must exist")
-                                            };
-                                            //TODO(breakpoints): toggle breakpoint
-                                            //worker.send(WorkerRequest::ToggleBreakpoint(addr));
-                                        } else {
-                                            unreachable!("Error in decompiled not possible if not compiled");
-                                        }
-                                    }
-                                    State::Compiled(curr) => {
-                                        let binary = curr.mipsy_internal_state.binary.as_ref().expect("binary must exist");
+                    let toggle_breakpoint = {
+                        let item = String::from(item);
+                        // let worker = props.worker.clone();
+                        let state = state.clone();
+                        Callback::from(move |_| {
+                            match state.as_ref() {
+                                State::NoBinary=> unreachable!(),
+                                State::Error(error_type) =>  {
+                                    if let ErrorType::RuntimeError(error) = error_type {
+                                        let binary = error.mips_state.binary.as_ref().expect("binary must exist");
                                         let addr = if let Some(source_instr) = source_instr {
                                             source_instr
                                         } else {
                                             binary.get_label(&item.trim().replace(':', "")).expect("label must exist")
                                         };
                                         //TODO(breakpoints): toggle breakpoint
-                                        // worker.send(WorkerRequest::ToggleBreakpoint(addr));
-                                    },
-                                }
-                            })
-                        };
-
-
-                        html! {
-                            <tr
-                              class={
-                                if should_highlight {
-                                    css!(r#"
-                                        background-color: #f5f5f5;
-                                    "#)
-                                } else {
-                                    css!(r#"
-                                        background-color: transparent;
-                                    "#)
-                                }
-                              }>
-                                <td class={css!(r#"
-                                    &:hover button {
-                                        visibility: visible;
+                                        //worker.send(WorkerRequest::ToggleBreakpoint(addr));
+                                    } else {
+                                        unreachable!("Error in decompiled not possible if not compiled");
                                     }
-                                "#)} >
-                                    <button
-                                        onclick={toggle_breakpoint}
-                                        z-index={0}
-                                        class={css!(r#"
-                                            text-align: center;
-                                            font-size: 14px;
-                                            visibility: ${is_invisble};
-                                            background-color: transparent;
-                                            border: none;
-                                            &:hover {
-                                                visibility: ${inverse_is_visible};
-                                                cursor: pointer;
-                                            }
-                                        "#,
-                                            is_invisble = if current_is_breakpoint {
-                                                "visible"
-                                            } else {
-                                                "hidden"
-                                            },
-                                            inverse_is_visible = if current_is_breakpoint {
-                                                "hidden"
-                                            } else {
-                                                "visible"
-                                            },
-                                        )}
-                                    >
-                                        if current_is_breakpoint {
-                                            <StopIconFilled />
-                                        } else {
-                                            <StopIconOutline />
+                                }
+                                State::Compiled(curr) => {
+                                    let binary = curr.mipsy_internal_state.binary.as_ref().expect("binary must exist");
+                                    let addr = if let Some(source_instr) = source_instr {
+                                        source_instr
+                                    } else {
+                                        binary.get_label(&item.trim().replace(':', "")).expect("label must exist")
+                                    };
+                                    //TODO(breakpoints): toggle breakpoint
+                                    // worker.send(WorkerRequest::ToggleBreakpoint(addr));
+                                },
+                            }
+                        })
+                    };
+
+
+                    html! {
+                        <tr
+                          class={
+                            if should_highlight {
+                                css!(r#"
+                                    background-color: #f5f5f5;
+                                "#)
+                            } else {
+                                css!(r#"
+                                    background-color: transparent;
+                                "#)
+                            }
+                          }>
+                            <td class={css!(r#"
+                                &:hover button {
+                                    visibility: visible;
+                                }
+                            "#)} >
+                                <button
+                                    onclick={toggle_breakpoint}
+                                    z-index={0}
+                                    class={css!(r#"
+                                        text-align: center;
+                                        font-size: 14px;
+                                        visibility: ${is_invisble};
+                                        background-color: transparent;
+                                        border: none;
+                                        &:hover {
+                                            visibility: ${inverse_is_visible};
+                                            cursor: pointer;
                                         }
-                                    </button>
-                                </td>
-                                <td class={css!("vertical-align: middle;")}>
-                                    {item}
-                                </td>
-                            </tr>
-                        }
+                                    "#,
+                                        is_invisble = if current_is_breakpoint {
+                                            "visible"
+                                        } else {
+                                            "hidden"
+                                        },
+                                        inverse_is_visible = if current_is_breakpoint {
+                                            "hidden"
+                                        } else {
+                                            "visible"
+                                        },
+                                    )}
+                                >
+                                    if current_is_breakpoint {
+                                        <StopIconFilled />
+                                    } else {
+                                        <StopIconOutline />
+                                    }
+                                </button>
+                            </td>
+                            <td class={css!("vertical-align: middle;")}>
+                                {item}
+                            </td>
+                        </tr>
                     }
+
                 })
             }}
             </table>

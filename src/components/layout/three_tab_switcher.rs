@@ -1,11 +1,13 @@
-use bounce::use_atom;
+use std::ops::Deref;
+
+use bounce::use_slice_value;
 use stylist::yew::styled_component;
 use stylist::Style;
 use yew::prelude::*;
 use yew::virtual_dom::VChild;
 
 use crate::components::decompiled_container::DecompiledContainer;
-use crate::state::State;
+use crate::state::app::State;
 
 use super::containers::{DataContainer, EditorContainer};
 
@@ -38,8 +40,8 @@ pub fn three_tab_switcher(
         })
     };
 
-    let binary_exists = use_atom::<State>();
-    let binary_exists = !matches!(*binary_exists, State::NoBinary);
+    let binary_exists = use_slice_value::<State>();
+    let binary_exists = !matches!(binary_exists.deref(), State::NoBinary);
     let is_disabled = |index| {
         if index != 0 {
             !binary_exists

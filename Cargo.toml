@@ -29,5 +29,7 @@ mipsy_utils = { git = "https://github.com/spanishpear/mipsy"  }
 mipsy_lib = { git = "https://github.com/spanishpear/mipsy" }
 mipsy_parser = { git = "https://github.com/spanishpear/mipsy" }
 mipsy_instructions = { git = "https://github.com/spanishpear/mipsy"  , features = ["rt_yaml"] } 
+async-channel = "1.8.0"
+yew-hooks = "0.2.0"
 
 

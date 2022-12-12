@@ -7,27 +7,28 @@ use serde::{Deserialize, Serialize};
 pub enum ToWorker {
     Ping,
     CompileCode(Vec<EditorFile>),
-    ToggleBreakpoint(u32),
+    ToggleBreakpoint(String, Option<u32>),
+    GetBreakpoints,
 }
 
 /// The type that a Worker
 /// can send back
-#[derive(Serialize, Deserialize, Debug)]
+#[derive(Clone, Serialize, Deserialize, Debug, PartialEq)]
 pub enum FromWorker {
     Pong(String),
     Error(ErrorResponseData),
     Decompiled(DecompiledResponseData),
+    Breakpoints(Vec<u32>),
 }
 
-#[derive(Serialize, Deserialize, Debug)]
+#[derive(Clone, Serialize, Deserialize, Debug, PartialEq)]
 pub struct ErrorResponseData {
     pub error_type: mipsy_lib::MipsyError,
     pub file_name: String,
     pub message: String,
 }
 
-#[derive(Serialize, Deserialize, Debug)]
+#[derive(Clone, Serialize, Deserialize, Debug, PartialEq, Eq)]
 pub struct DecompiledResponseData {
     pub decompiled: String,
-    pub binary: mipsy_lib::Binary,
 }

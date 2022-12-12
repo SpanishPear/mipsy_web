@@ -1,11 +1,14 @@
+use crate::agent::worker::MipsyWebWorker;
+use crate::agent::FromWorker;
+use crate::components::app::ReceiverHolder;
+use crate::components::icons::{StopIconFilled, StopIconOutline};
+use crate::state::app::{State, StateAction};
 use bounce::use_slice;
 use gloo_worker::WorkerBridge;
 use stylist::yew::styled_component;
 use yew::prelude::*;
-
-use crate::agent::worker::MipsyWebWorker;
-use crate::components::icons::{StopIconFilled, StopIconOutline};
-use crate::state::app::{State, StateAction};
+use yew_hooks::use_async_with_options;
+use yew_hooks::UseAsyncOptions;
 
 #[styled_component(DecompiledContainer)]
 pub fn data() -> Html {
@@ -23,6 +26,22 @@ pub fn data() -> Html {
         _ => unreachable!("Not possible to be rendered if not compiled"),
     };
 
+    let receiver = use_context::<ReceiverHolder>().expect("receiver must exist at root");
+    let breakpoints = {
+        log::info!("getting breakpoints");
+        let worker = worker.clone();
+        use_async_with_options(
+            async move {
+                worker.send(crate::agent::ToWorker::GetBreakpoints);
+                receiver.receiver.recv().await
+            },
+            UseAsyncOptions::enable_auto(),
+        )
+    };
+
+    if let Some(breakpoints) = &breakpoints.data {
+        log::debug!("breakpoints: {:?}", breakpoints);
+    };
     //TODO(refactor): this is from mipsy_web_v1 - refactor to remove duped code;
     html! {
             <pre class={css!(r#"
@@ -52,7 +71,15 @@ pub fn data() -> Html {
                         false
                     };
 
-                    let current_is_breakpoint = state.check_breakpoint_at_line(source_instr, item);
+                    let current_is_breakpoint = if let Some(source_instr) = source_instr {
+                        if let Some(FromWorker::Breakpoints(breakpoints)) = &breakpoints.data {
+                            breakpoints.contains(&source_instr)
+                        } else {
+                            false
+                        }
+                    } else {
+                        false
+                    };
 
                     let toggle_breakpoint = {
                         let item = String::from(item);
@@ -61,6 +88,7 @@ pub fn data() -> Html {
                         Callback::from(move |_| {
                             state.dispatch(StateAction::ToggleBreakpoint(source_instr, item.clone(), worker.clone()));
                         })
+
                     };
 
 

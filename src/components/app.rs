@@ -16,12 +16,25 @@ use crate::{
     state::app::{State, StateAction},
     SplitContainer,
 };
+use async_channel::Receiver;
 use bounce::{use_atom, use_slice, use_slice_dispatch};
 use gloo_worker::{Spawnable, WorkerBridge};
 use js_sys::Promise;
 use stylist::yew::styled_component;
 use wasm_bindgen_futures::{spawn_local, JsFuture};
 use yew::prelude::*;
+
+#[derive(Clone)]
+pub struct ReceiverHolder {
+    pub receiver: Receiver<FromWorker>,
+}
+
+// thoughts and prayers
+impl PartialEq for ReceiverHolder {
+    fn eq(&self, _other: &Self) -> bool {
+        true
+    }
+}
 
 #[styled_component(App)]
 pub fn app() -> Html {
@@ -30,6 +43,11 @@ pub fn app() -> Html {
     // that enables panes to resize
     // store a handle for future use
     let split_container = use_atom::<SplitContainer>();
+
+    let (sender, receiver) = async_channel::unbounded();
+
+    let receiver_holder = ReceiverHolder { receiver };
+
     use_effect_with_deps(
         move |_| {
             log::debug!("running setup_splits");
@@ -58,7 +76,10 @@ pub fn app() -> Html {
                         state_dispatch(StateAction::InitialiseFromDecompiled(response));
                     }
                     FromWorker::Pong(_) => {}
-                    _ => {}
+
+                    _ => {
+                        sender.send_blocking(m.clone()).unwrap();
+                    }
                 }
             })
             .spawn("/worker.js")
@@ -99,24 +120,26 @@ pub fn app() -> Html {
     );
 
     html! {
-        <ContextProvider<WorkerBridge<MipsyWebWorker>> context={(*bridge).clone()}>
-        <AppContainer>
-            <ThreeColResizable>
-                    <MenuContainer />
-                    <ThreeTabSwitcher
-                        editor_container={{ html_nested!{
-                            <EditorContainer />
-                        }}}
-                        decompiled_container={{ html_nested!{
-                            <DecompiledContainer />
-                        }}}
-                        data_container={{ html_nested!{
-                            <DataContainer />
-                        }}}
-                    />
-                    <RuntimeContainer />
-            </ThreeColResizable>
-        </AppContainer>
-        </ContextProvider<WorkerBridge<MipsyWebWorker>>>
+        <ContextProvider<ReceiverHolder> context={receiver_holder}>
+            <ContextProvider<WorkerBridge<MipsyWebWorker>> context={(*bridge).clone()}>
+            <AppContainer>
+                <ThreeColResizable>
+                        <MenuContainer />
+                        <ThreeTabSwitcher
+                            editor_container={{ html_nested!{
+                                <EditorContainer />
+                            }}}
+                            decompiled_container={{ html_nested!{
+                                <DecompiledContainer />
+                            }}}
+                            data_container={{ html_nested!{
+                                <DataContainer />
+                            }}}
+                        />
+                        <RuntimeContainer />
+                </ThreeColResizable>
+            </AppContainer>
+            </ContextProvider<WorkerBridge<MipsyWebWorker>>>
+        </ContextProvider<ReceiverHolder>>
     }
 }

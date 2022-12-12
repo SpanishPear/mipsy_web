@@ -44,20 +44,8 @@ impl Reducible for State {
             }
             StateAction::ToggleBreakpoint(source_instr, line, bridge) => {
                 match &*self {
-                    State::Error(ErrorType::RuntimeError(error)) => {
-                        let binary = error.mips_state.binary.as_ref().expect("binary must exist");
-                        let addr = breakpoint_address_from_source(&line, source_instr, binary);
-                        bridge.send(ToWorker::ToggleBreakpoint(addr));
-                    }
-                    State::Compiled(curr) => {
-                        let binary = curr
-                            .mipsy_internal_state
-                            .binary
-                            .as_ref()
-                            .expect("binary must exist");
-
-                        let addr = breakpoint_address_from_source(&line, source_instr, binary);
-                        bridge.send(ToWorker::ToggleBreakpoint(addr));
+                    State::Error(ErrorType::RuntimeError(_)) | State::Compiled(_) => {
+                        bridge.send(ToWorker::ToggleBreakpoint(line, source_instr));
                     }
                     _ => unreachable!("Not possible to toggle breakpoint"),
                 }
@@ -69,27 +57,7 @@ impl Reducible for State {
 
 impl State {
     pub fn new_compiled_state_from_response(response: DecompiledResponseData) -> Self {
-        Self::Compiled(RunningState::new(response.decompiled, response.binary))
-    }
-
-    pub fn check_breakpoint_at_line(&self, source_instr: Option<u32>, line: &str) -> bool {
-        match &*self {
-            State::Error(ErrorType::RuntimeError(err)) => {
-                let binary = err.mips_state.binary.as_ref().expect("binary must exist");
-                let addr = breakpoint_address_from_source(&line, source_instr, binary);
-                binary.breakpoints.contains_key(&addr)
-            }
-            State::Compiled(curr) => {
-                let binary = curr
-                    .mipsy_internal_state
-                    .binary
-                    .as_ref()
-                    .expect("binary must exist");
-                let addr = breakpoint_address_from_source(&line, source_instr, binary);
-                binary.breakpoints.contains_key(&addr)
-            }
-            _ => unreachable!("cannot have decompiled if no file"),
-        }
+        Self::Compiled(RunningState::new(response.decompiled))
     }
 }
 

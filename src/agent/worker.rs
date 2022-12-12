@@ -4,6 +4,7 @@ use crate::agent::communication::{DecompiledResponseData, ErrorResponseData};
 use crate::agent::mipsy_glue;
 use crate::agent::state::RuntimeState;
 use crate::config::MipsyWebConfig;
+use crate::state::app::breakpoint_address_from_source;
 use gloo_worker::{HandlerId, Worker, WorkerScope};
 use mipsy_lib::compile::breakpoints::Breakpoint;
 use mipsy_lib::compile::CompilerOptions;
@@ -25,8 +26,8 @@ enum Message {
 }
 
 impl Worker for MipsyWebWorker {
-    type Input = ToWorker;
     type Message = ();
+    type Input = ToWorker;
     type Output = FromWorker;
 
     fn create(_scope: &WorkerScope<Self>) -> Self {
@@ -68,10 +69,7 @@ impl Worker for MipsyWebWorker {
                 // use if let to reduce nesting...
                 if let Ok(binary) = compiled {
                     let decompiled = mipsy_glue::decompile(&self.inst_set, &binary, &files);
-                    let response = Self::Output::Decompiled(DecompiledResponseData {
-                        decompiled,
-                        binary: binary.to_owned(),
-                    });
+                    let response = Self::Output::Decompiled(DecompiledResponseData { decompiled });
 
                     // create a new runtime from the given binary
                     let runtime = mipsy_lib::runtime(&binary, &[]);
@@ -110,15 +108,23 @@ impl Worker for MipsyWebWorker {
                     )
                 }
             }
-            ToWorker::ToggleBreakpoint(addr) => {
+            ToWorker::ToggleBreakpoint(line, source_instr) => {
                 let binary = self.binary_runtime_state.as_mut();
                 if let Some(binary) = binary {
+                    let addr = breakpoint_address_from_source(&line, source_instr, &binary.binary);
                     if binary.binary.breakpoints.contains_key(&addr) {
                         binary.binary.breakpoints.remove(&addr);
                     } else {
                         let id = Binary::generate_id(&binary.binary.breakpoints);
                         binary.binary.breakpoints.insert(addr, Breakpoint::new(id));
                     }
+                }
+            }
+            ToWorker::GetBreakpoints => {
+                let binary = self.binary_runtime_state.as_ref();
+                if let Some(binary) = binary {
+                    let breakpoints = binary.binary.breakpoints.keys().cloned().collect();
+                    scope.respond(id, Self::Output::Breakpoints(breakpoints));
                 }
             }
         }

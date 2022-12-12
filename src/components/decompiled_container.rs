@@ -104,26 +104,36 @@ pub fn data() -> Html {
                         };
 
 
-                        // TODO(breakpoints): make css styling work to hover correctly
                         html! {
                             <tr
                               class={
-                                classes!("", if should_highlight {
-                                  "bg-th-highlighting"
+                                if should_highlight {
+                                    css!(r#"
+                                        background-color: #f5f5f5;
+                                    "#)
                                 } else {
-                                  ""
-                                })
+                                    css!(r#"
+                                        background-color: transparent;
+                                    "#)
+                                }
                               }>
-                                <td class="breakpoint_button_td" >
+                                <td class={css!(r#"
+                                    &:hover button {
+                                        visibility: visible;
+                                    }
+                                "#)} >
                                     <button
                                         onclick={toggle_breakpoint}
                                         z-index={0}
                                         class={css!(r#"
                                             text-align: center;
-                                            font-size: 11px;
+                                            font-size: 14px;
                                             visibility: ${is_invisble};
+                                            background-color: transparent;
+                                            border: none;
                                             &:hover {
                                                 visibility: ${inverse_is_visible};
+                                                cursor: pointer;
                                             }
                                         "#,
                                             is_invisble = if current_is_breakpoint {
@@ -137,8 +147,6 @@ pub fn data() -> Html {
                                                 "visible"
                                             },
                                         )}
-                                        //TODO(breakpoints): toggle breakpoint
-                                        //classes!("text-center", "text-xs", if !current_is_breakpoint {"group-hover:visible invisible"} else {""})}
                                     >
                                         if current_is_breakpoint {
                                             <StopIconFilled />
@@ -147,7 +155,7 @@ pub fn data() -> Html {
                                         }
                                     </button>
                                 </td>
-                                <td>
+                                <td class={css!("vertical-align: middle;")}>
                                     {item}
                                 </td>
                             </tr>

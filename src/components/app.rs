@@ -1,11 +1,14 @@
 use crate::{
     agent::{worker::MipsyWebWorker, FromWorker},
     components::{
-        decompiled_container::DecompiledContainer, layout::ThreeColResizable,
-        layout::ThreeTabSwitcher, sidebar::SideBar,
+        decompiled_container::DecompiledContainer,
+        layout::{containers::RuntimeContainer, ThreeTabSwitcher},
+        layout::{
+            containers::{AppContainer, DataContainer, EditorContainer, MenuContainer},
+            ThreeColResizable,
+        },
     },
     editor::{
-        component::Editor,
         files::{FileList, FileListAction},
         MipsyCodeEditorLink,
     },
@@ -16,7 +19,7 @@ use crate::{
 use bounce::{use_atom, use_slice};
 use gloo_worker::{Spawnable, WorkerBridge};
 use js_sys::Promise;
-use stylist::{css, yew::styled_component};
+use stylist::yew::styled_component;
 use wasm_bindgen_futures::{spawn_local, JsFuture};
 use yew::prelude::*;
 
@@ -115,72 +118,5 @@ pub fn app() -> Html {
             </ThreeColResizable>
         </AppContainer>
         </ContextProvider<WorkerBridge<MipsyWebWorker>>>
-    }
-}
-
-#[derive(Properties, PartialEq)]
-struct AppContainerProps {
-    children: Children,
-}
-
-#[styled_component(AppContainer)]
-fn app_container(props: &AppContainerProps) -> Html {
-    html! {
-        <div class={css!(r#"
-            min-width: 100vw;
-            min-height: 100vh;
-            height: 100%;
-            width: 100%;
-            background-color: #fee2e2;
-        "#)}>
-            {
-                for props.children.iter()
-            }
-        </div>
-    }
-}
-
-#[styled_component(MenuContainer)]
-pub fn menu_container() -> Html {
-    html! {
-        <div class={css!(r#"
-            width: 100%;
-            height: 100%;
-        "#)}>
-           <SideBar />
-        </div>
-    }
-}
-
-#[styled_component(EditorContainer)]
-pub fn editor_container() -> Html {
-    let styles: String = "width: 100%; height: 100%; max-height: 90vh;".into();
-    html! {
-        <div class={css!(r#"
-            width: 100%;
-            height: 100%;
-            min-width: 100%;
-            min-height: 100%;
-        "#)}>
-            <Editor {styles}/>
-        </div>
-    }
-}
-
-#[styled_component(RuntimeContainer)]
-pub fn runtime_container() -> Html {
-    html! {
-        <div class={css!(r#"
-            background-color: green;
-        "#)}>
-            {"runtime"}
-        </div>
-    }
-}
-
-#[styled_component(DataContainer)]
-pub fn data() -> Html {
-    html! {
-         <>{"data"}</>
     }
 }

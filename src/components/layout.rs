@@ -1,3 +1,4 @@
+pub mod containers;
 mod three_col_resizable;
 mod three_tab_switcher;
 

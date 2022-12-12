@@ -4,9 +4,10 @@ use stylist::Style;
 use yew::prelude::*;
 use yew::virtual_dom::VChild;
 
-use crate::components::app::{DataContainer, EditorContainer};
 use crate::components::decompiled_container::DecompiledContainer;
 use crate::state::State;
+
+use super::containers::{DataContainer, EditorContainer};
 
 #[derive(Properties, PartialEq, Debug, Clone)]
 pub struct ThreeTabSwitcherProps {
@@ -73,7 +74,6 @@ pub fn three_tab_switcher(
         .unwrap();
 
         if is_disabled {
-            log::info!("disabled");
             let disabled_style = Style::new(
                 r#"
                 background-color: #e9ecef;

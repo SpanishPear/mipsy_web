@@ -1,15 +1,16 @@
-use bounce::use_slice_value;
+use bounce::use_slice;
+use gloo_worker::WorkerBridge;
 use stylist::yew::styled_component;
 use yew::prelude::*;
 
+use crate::agent::worker::MipsyWebWorker;
 use crate::components::icons::{StopIconFilled, StopIconOutline};
-use crate::state::app::State;
-use crate::state::error::ErrorType;
+use crate::state::app::{State, StateAction};
 
 #[styled_component(DecompiledContainer)]
 pub fn data() -> Html {
-    let state = use_slice_value::<State>();
-
+    let state = use_slice::<State>();
+    let worker = use_context::<WorkerBridge<MipsyWebWorker>>().expect("worker must exist at root");
     // get the raw decompiled text, and the current instruction (PC)
     let (decompiled, current_instr) = match *state {
         State::Compiled(ref running_state) => (
@@ -39,6 +40,7 @@ pub fn data() -> Html {
                     }
 
                     // the actual hex address lives from 2-10, 01 are 0x
+                    // option because the current line could be a label (and hence no addr)
                     let source_instr = if item.starts_with("0x") {
                         Some(u32::from_str_radix(&item[2..10], 16).unwrap_or(0))
                     } else {
@@ -50,59 +52,14 @@ pub fn data() -> Html {
                         false
                     };
 
-                    let current_is_breakpoint = match state.as_ref() {
-                        State::NoBinary => unreachable!("cannot have decompiled if no file"),
-                        State::Error(error_type) => {
-                            if let ErrorType::RuntimeError(_error) = error_type {
-                                false
-                            } else {
-                                unreachable!("Error in decompiled not possible if not compiled");
-                            }
-                        },
-                        State::Compiled(curr) => {
-                            let binary = curr.mipsy_internal_state.binary.as_ref().expect("binary must exist");
-                            let addr = if let Some(source_instr) = source_instr {
-                                source_instr
-                            } else {
-                                binary.get_label(&item.trim().replace(':', "")).expect("label must exist")
-                            };
-                            binary.breakpoints.contains_key(&addr)
-                        }
-
-                    };
+                    let current_is_breakpoint = state.check_breakpoint_at_line(source_instr, item);
 
                     let toggle_breakpoint = {
                         let item = String::from(item);
-                        // let worker = props.worker.clone();
                         let state = state.clone();
+                        let worker = worker.clone();
                         Callback::from(move |_| {
-                            match state.as_ref() {
-                                State::NoBinary=> unreachable!(),
-                                State::Error(error_type) =>  {
-                                    if let ErrorType::RuntimeError(error) = error_type {
-                                        let binary = error.mips_state.binary.as_ref().expect("binary must exist");
-                                        let addr = if let Some(source_instr) = source_instr {
-                                            source_instr
-                                        } else {
-                                            binary.get_label(&item.trim().replace(':', "")).expect("label must exist")
-                                        };
-                                        //TODO(breakpoints): toggle breakpoint
-                                        //worker.send(WorkerRequest::ToggleBreakpoint(addr));
-                                    } else {
-                                        unreachable!("Error in decompiled not possible if not compiled");
-                                    }
-                                }
-                                State::Compiled(curr) => {
-                                    let binary = curr.mipsy_internal_state.binary.as_ref().expect("binary must exist");
-                                    let addr = if let Some(source_instr) = source_instr {
-                                        source_instr
-                                    } else {
-                                        binary.get_label(&item.trim().replace(':', "")).expect("label must exist")
-                                    };
-                                    //TODO(breakpoints): toggle breakpoint
-                                    // worker.send(WorkerRequest::ToggleBreakpoint(addr));
-                                },
-                            }
+                            state.dispatch(StateAction::ToggleBreakpoint(source_instr, item.clone(), worker.clone()));
                         })
                     };
 

@@ -5,7 +5,9 @@ use crate::agent::mipsy_glue;
 use crate::agent::state::RuntimeState;
 use crate::config::MipsyWebConfig;
 use gloo_worker::{HandlerId, Worker, WorkerScope};
+use mipsy_lib::compile::breakpoints::Breakpoint;
 use mipsy_lib::compile::CompilerOptions;
+use mipsy_lib::Binary;
 use mipsy_parser::TaggedFile;
 
 /// A struct containing
@@ -106,6 +108,17 @@ impl Worker for MipsyWebWorker {
                             message: error_msg,
                         }),
                     )
+                }
+            }
+            ToWorker::ToggleBreakpoint(addr) => {
+                let binary = self.binary_runtime_state.as_mut();
+                if let Some(binary) = binary {
+                    if binary.binary.breakpoints.contains_key(&addr) {
+                        binary.binary.breakpoints.remove(&addr);
+                    } else {
+                        let id = Binary::generate_id(&binary.binary.breakpoints);
+                        binary.binary.breakpoints.insert(addr, Breakpoint::new(id));
+                    }
                 }
             }
         }

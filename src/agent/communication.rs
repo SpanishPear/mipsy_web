@@ -7,6 +7,7 @@ use serde::{Deserialize, Serialize};
 pub enum ToWorker {
     Ping,
     CompileCode(Vec<EditorFile>),
+    ToggleBreakpoint(u32),
 }
 
 /// The type that a Worker

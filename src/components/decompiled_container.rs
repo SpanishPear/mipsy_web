@@ -1,3 +1,4 @@
+use bounce::use_atom_value;
 use bounce::use_slice;
 use gloo_worker::WorkerBridge;
 use stylist::yew::styled_component;
@@ -6,11 +7,13 @@ use yew::prelude::*;
 use crate::agent::worker::MipsyWebWorker;
 use crate::components::icons::{StopIconFilled, StopIconOutline};
 use crate::state::app::{State, StateAction};
+use crate::state::breakpoints::Breakpoints;
 
 #[styled_component(DecompiledContainer)]
 pub fn data() -> Html {
     let state = use_slice::<State>();
     let worker = use_context::<WorkerBridge<MipsyWebWorker>>().expect("worker must exist at root");
+    let breakpoints = use_atom_value::<Breakpoints>();
     // get the raw decompiled text, and the current instruction (PC)
     let (decompiled, current_instr) = match *state {
         State::Compiled(ref running_state) => (
@@ -46,13 +49,12 @@ pub fn data() -> Html {
                     } else {
                         None
                     };
-                    let should_highlight = if let Some(source_instr) = source_instr {
-                        source_instr == current_instr
-                    } else {
-                        false
-                    };
 
-                    let current_is_breakpoint = state.check_breakpoint_at_line(source_instr, item);
+                    let (breakpoint, should_highlight) = if let Some(source_instr) = source_instr {
+                        (breakpoints.inner().contains(&source_instr), source_instr == current_instr)
+                    } else {
+                        (false, false)
+                    };
 
                     let toggle_breakpoint = {
                         let item = String::from(item);
@@ -96,19 +98,19 @@ pub fn data() -> Html {
                                             cursor: pointer;
                                         }
                                     "#,
-                                        is_invisble = if current_is_breakpoint {
+                                        is_invisble = if breakpoint {
                                             "visible"
                                         } else {
                                             "hidden"
                                         },
-                                        inverse_is_visible = if current_is_breakpoint {
+                                        inverse_is_visible = if breakpoint {
                                             "hidden"
                                         } else {
                                             "visible"
                                         },
                                     )}
                                 >
-                                    if current_is_breakpoint {
+                                    if breakpoint {
                                         <StopIconFilled />
                                     } else {
                                         <StopIconOutline />

@@ -1,4 +1,5 @@
 use crate::editor::EditorFile;
+use crate::state::breakpoints::Breakpoints;
 use serde::{Deserialize, Serialize};
 
 /// The type that a worker
@@ -7,7 +8,8 @@ use serde::{Deserialize, Serialize};
 pub enum ToWorker {
     Ping,
     CompileCode(Vec<EditorFile>),
-    ToggleBreakpoint(u32),
+    ToggleBreakpoint(Option<u32>, String),
+    GetBreakpoints,
 }
 
 /// The type that a Worker
@@ -17,6 +19,9 @@ pub enum FromWorker {
     Pong(String),
     Error(ErrorResponseData),
     Decompiled(DecompiledResponseData),
+    /// A vector of addresses of all active breakpoints
+    // TODO(breakpoints): extend to include enabled,ignore_count, etc
+    Breakpoints(Breakpoints),
 }
 
 #[derive(Serialize, Deserialize, Debug)]
@@ -29,5 +34,4 @@ pub struct ErrorResponseData {
 #[derive(Serialize, Deserialize, Debug)]
 pub struct DecompiledResponseData {
     pub decompiled: String,
-    pub binary: mipsy_lib::Binary,
 }

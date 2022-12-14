@@ -14,7 +14,7 @@ pub struct RunningState {
 }
 
 impl RunningState {
-    pub fn new(decompiled: String, binary: mipsy_lib::Binary) -> Self {
+    pub fn new(decompiled: String) -> Self {
         Self {
             decompiled,
             mipsy_internal_state: MipsyInternalState::new(),

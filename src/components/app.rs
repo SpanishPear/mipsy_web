@@ -13,10 +13,13 @@ use crate::{
         MipsyCodeEditorLink,
     },
     setup_splits,
-    state::app::{State, StateAction},
+    state::{
+        app::{State, StateAction},
+        breakpoints::Breakpoints,
+    },
     SplitContainer,
 };
-use bounce::{use_atom, use_slice, use_slice_dispatch};
+use bounce::{use_atom, use_atom_setter, use_slice, use_slice_dispatch};
 use gloo_worker::{Spawnable, WorkerBridge};
 use js_sys::Promise;
 use stylist::yew::styled_component;
@@ -30,6 +33,7 @@ pub fn app() -> Html {
     // that enables panes to resize
     // store a handle for future use
     let split_container = use_atom::<SplitContainer>();
+    let breakpoint_setter = use_atom_setter::<Breakpoints>();
     use_effect_with_deps(
         move |_| {
             log::debug!("running setup_splits");
@@ -51,12 +55,13 @@ pub fn app() -> Html {
                 // and does not block the web worker
                 log::debug!("received message from worker: {:?}", m);
                 match m {
-                    FromWorker::Decompiled(response) => {
+                    FromWorker::Decompiled(res) => {
                         // we have decompiled and binary
                         // from succesful compilation
                         // so set the state to a new compiled state
-                        state_dispatch(StateAction::InitialiseFromDecompiled(response));
+                        state_dispatch(StateAction::InitialiseFromDecompiled(res));
                     }
+                    FromWorker::Breakpoints(res) => breakpoint_setter(res),
                     FromWorker::Pong(_) => {}
                     _ => {}
                 }

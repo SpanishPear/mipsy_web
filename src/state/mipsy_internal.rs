@@ -1,4 +1,3 @@
-use mipsy_lib::Binary;
 use std::collections::HashMap;
 
 use mipsy_lib::Safe;

@@ -44,21 +44,23 @@ impl Reducible for State {
             }
             StateAction::ToggleBreakpoint(source_instr, line, bridge) => {
                 match &*self {
-                    State::Error(ErrorType::RuntimeError(error)) => {
-                        let binary = error.mips_state.binary.as_ref().expect("binary must exist");
-                        let addr = breakpoint_address_from_source(&line, source_instr, binary);
-                        bridge.send(ToWorker::ToggleBreakpoint(addr));
-                    }
-                    State::Compiled(curr) => {
-                        let binary = curr
+                    State::Error(ErrorType::RuntimeError(error)) => {} /*{
+                    //TODO(breakpoints): move to worker
+                    let binary = error.mips_state.binary.as_ref().expect("binary must exist");
+                    let addr = breakpoint_address_from_source(&line, source_instr, binary);
+                    bridge.send(ToWorker::ToggleBreakpoint(addr));
+                    }*/
+                    State::Compiled(curr) => {} /*{
+                    //TODO(breakpoints): move to worker
+                    /*let binary = curr
                             .mipsy_internal_state
                             .binary
                             .as_ref()
                             .expect("binary must exist");
-
+                        */
                         let addr = breakpoint_address_from_source(&line, source_instr, binary);
                         bridge.send(ToWorker::ToggleBreakpoint(addr));
-                    }
+                    }*/
                     _ => unreachable!("Not possible to toggle breakpoint"),
                 }
                 self
@@ -73,6 +75,8 @@ impl State {
     }
 
     pub fn check_breakpoint_at_line(&self, source_instr: Option<u32>, line: &str) -> bool {
+        true
+        /*
         match &*self {
             State::Error(ErrorType::RuntimeError(err)) => {
                 let binary = err.mips_state.binary.as_ref().expect("binary must exist");
@@ -89,7 +93,7 @@ impl State {
                 binary.breakpoints.contains_key(&addr)
             }
             _ => unreachable!("cannot have decompiled if no file"),
-        }
+        */
     }
 }
 

@@ -17,7 +17,7 @@ impl RunningState {
     pub fn new(decompiled: String, binary: mipsy_lib::Binary) -> Self {
         Self {
             decompiled,
-            mipsy_internal_state: MipsyInternalState::new_with_binary(binary),
+            mipsy_internal_state: MipsyInternalState::new(),
             should_kill: false,
             input_needed: None,
         }

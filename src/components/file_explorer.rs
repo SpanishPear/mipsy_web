@@ -97,10 +97,7 @@ fn from(
         let uri = uri.clone();
         Callback::from(move |_: MouseEvent| {
             files.dispatch(FileListAction::SetViewState(editor_link.clone()));
-            files.dispatch(FileListAction::SetSelected(
-                uri.clone(),
-                editor_link.clone(),
-            ));
+            files.dispatch(FileListAction::SetSelected(uri.clone()));
             files.dispatch(FileListAction::RestoreViewState(
                 editor_link.clone(),
                 uri.clone(),

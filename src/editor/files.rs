@@ -58,7 +58,7 @@ pub enum FileListAction {
     /// restore the view state (on switching tabs usually)
     RestoreViewState(UseAtomHandle<MipsyCodeEditorLink>, UriEq),
     /// updates the selected
-    SetSelected(UriEq, UseAtomHandle<MipsyCodeEditorLink>),
+    SetSelected(UriEq),
     /// Log the current state of the FileList
     Log,
 
@@ -141,14 +141,8 @@ impl Reducible for FileList {
 
                 return_val.unwrap_or(self)
             }
-            FileListAction::SetSelected(uri, editor_link) => {
+            FileListAction::SetSelected(uri) => {
                 let selected = self.files.iter().position(|file| file.uri == uri);
-
-                editor_link.link.with_editor(|editor| {
-                    editor.set_model(
-                        &monaco::api::TextModel::get(&uri).expect("The model should exist"),
-                    );
-                });
 
                 Rc::new(Self {
                     files: self.files.clone(),

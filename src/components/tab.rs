@@ -36,10 +36,7 @@ pub fn tab(
         let editor_link = editor_link.clone();
         Callback::from(move |_: MouseEvent| {
             files.dispatch(FileListAction::SetViewState(editor_link.clone()));
-            files.dispatch(FileListAction::SetSelected(
-                uri.clone(),
-                editor_link.clone(),
-            ));
+            files.dispatch(FileListAction::SetSelected(uri.clone()));
             files.dispatch(FileListAction::RestoreViewState(
                 editor_link.clone(),
                 uri.clone(),
@@ -55,7 +52,7 @@ pub fn tab(
             }
 
             if let Some(next) = files.get_next_tab() {
-                files.dispatch(FileListAction::SetSelected(next, editor_link.clone()));
+                files.dispatch(FileListAction::SetSelected(next));
             }
 
             // remove from files_list, and the monaco editor

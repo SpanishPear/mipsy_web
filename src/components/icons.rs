@@ -1,15 +1,35 @@
 use stylist::yew::styled_component;
 use yew::prelude::*;
 
+#[derive(Properties, Clone, PartialEq)]
+pub struct IconButtonProps {
+    pub onclick: Option<Callback<MouseEvent>>,
+    pub class: Option<Classes>,
+    pub children: Children,
+}
+
+#[styled_component(IconButton)]
+pub(crate) fn icon_button(props: &IconButtonProps) -> Html {
+    html! {
+        <button class={classes!(css!(r#"
+            width: 2.5rem;
+            height: 3rem;
+            background-color: transparent;
+            border: none;
+            &:hover {
+                cursor: pointer;
+                color: white;
+            }
+        "#), props.class.clone())} onclick={props.onclick.clone()}>
+            { for props.children.iter() }
+        </button>
+    }
+}
+
 #[styled_component(StopIconOutline)]
 pub(crate) fn stop_icon_outline() -> Html {
     html! {
-        <svg class={css!(r#"
-            width: 1.3rem;
-            height: 1.3rem;
-        "#)} fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1">
-          <path stroke-linecap="round" stroke-linejoin="round" d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-          <path stroke-linecap="round" stroke-linejoin="round" d="M9 10a1 1 0 011-1h4a1 1 0 011 1v4a1 1 0 01-1 1h-4a1 1 0 01-1-1v-4z" />
+        <svg viewBox="0 0 16 16" xmlns="http://www.w3.org/2000/svg" fill="currentColor"><path d="M2 2v12h12V2H2zm10.75 10.75h-9.5v-9.5h9.5v9.5z"/>
         </svg>
     }
 }
@@ -17,10 +37,7 @@ pub(crate) fn stop_icon_outline() -> Html {
 #[styled_component(StopIconFilled)]
 pub(crate) fn stop_icon_filled() -> Html {
     html! {
-        <svg class={css!(r#"
-            width: 1.3rem;
-            height: 1.3rem;
-        "#)} viewBox="0 0 20 20" fill="currentColor">
+        <svg viewBox="0 0 20 20" fill="currentColor">
             <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8 7a1 1 0 00-1 1v4a1 1 0 001 1h4a1 1 0 001-1V8a1 1 0 00-1-1H8z" clip-rule="evenodd" />
         </svg>
     }
@@ -40,11 +57,21 @@ pub(crate) fn run_icon() -> Html {
     }
 }
 
+#[styled_component(RunIconOutline)]
+pub(crate) fn run_icon_outline() -> Html {
+    html! {
+        <svg viewBox="0 0 16 16" fill="currentColor">
+          <path fill-rule="evenodd" clip-rule="evenodd" d="M4.25 3l1.166-.624 8 5.333v1.248l-8 5.334-1.166-.624V3zm1.5 1.401v7.864l5.898-3.932L5.75 4.401z"/>
+        </svg>
+    }
+}
+
 #[styled_component(StepBackIcon)]
 pub(crate) fn step_back_icon() -> Html {
     html! {
-        <svg xmlns="http://www.w3.org/2000/svg" class="h-3.5 w-3.5" viewBox="0 0 20 20" fill="currentColor">
-            <path fill-rule="evenodd" d="M12.707 5.293a1 1 0 010 1.414L9.414 10l3.293 3.293a1 1 0 01-1.414 1.414l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 0z" clip-rule="evenodd" />
+        <svg style="width: 1.6rem" viewBox="0 0 16 16" version="1.1">
+          <rect width="16" height="16" id="icon-bound" fill="none" />
+          <path d="M2,15h2V1H2V15z M14.4,2.4L13,1L6,8l7,7l1.4-1.4L8.8,8L14.4,2.4z" />
         </svg>
     }
 }
@@ -52,8 +79,18 @@ pub(crate) fn step_back_icon() -> Html {
 #[styled_component(StepForwardIcon)]
 pub(crate) fn step_forward_icon() -> Html {
     html! {
-        <svg xmlns="http://www.w3.org/2000/svg" class="h-3.5 w-3.5" viewBox="0 0 20 20" fill="currentColor">
-            <path fill-rule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clip-rule="evenodd" />
+        <svg viewBox="0 0 36 36" version="1.1"  preserveAspectRatio="xMidYMid meet">
+            <path d="M7.08,6.52a1.68,1.68,0,0,0,0,2.4L16.51,18,7.12,27.08a1.7,1.7,0,0,0,2.36,2.44h0L21.4,18,9.48,6.47A1.69,1.69,0,0,0,7.08,6.52Z" class="clr-i-outline clr-i-outline-path-1"></path><path d="M26.49,5a1.7,1.7,0,0,0-1.7,1.7V29.3a1.7,1.7,0,0,0,3.4,0V6.7A1.7,1.7,0,0,0,26.49,5Z" class="clr-i-outline clr-i-outline-path-2"></path>
+            <rect x="0" y="0" width="36" height="36" fill-opacity="0"/>
+        </svg>
+    }
+}
+
+#[styled_component(ResetIcon)]
+pub(crate) fn reset_icon() -> Html {
+    html! {
+        <svg viewBox="0 0 16 16" fill="currentColor">
+            <path fill-rule="evenodd" clip-rule="evenodd" d="M12.75 8a4.5 4.5 0 0 1-8.61 1.834l-1.391.565A6.001 6.001 0 0 0 14.25 8 6 6 0 0 0 3.5 4.334V2.5H2v4l.75.75h3.5v-1.5H4.352A4.5 4.5 0 0 1 12.75 8z"/>
         </svg>
     }
 }

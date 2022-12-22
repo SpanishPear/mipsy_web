@@ -1,4 +1,7 @@
-use crate::components::debugger::start_button::StartButton;
+use crate::components::icons::{
+    IconButton, ResetIcon, RunIconOutline, StepForwardIcon, StopIconOutline,
+};
+use crate::components::{debugger::start_button::StartButton, icons::StepBackIcon};
 use stylist::yew::styled_component;
 use yew::prelude::*;
 
@@ -20,8 +23,33 @@ pub fn render() -> Html {
                     { "Debugger" }
                 </div>
             </div>
-            <StartButton />
+            <div class={css!(r#"
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                justify-content: center;
+            "#)}>
+            <IconButton>
+                <RunIconOutline />
+            </IconButton>
 
+            <IconButton >
+                <StepBackIcon />
+            </IconButton>
+
+            <IconButton>
+                <StepForwardIcon />
+            </IconButton>
+
+            <IconButton>
+                <StopIconOutline/>
+            </IconButton>
+
+            <IconButton>
+                <ResetIcon />
+            </IconButton>
+
+            </div>
         </div>
     }
 }

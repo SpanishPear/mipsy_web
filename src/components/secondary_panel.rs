@@ -1,4 +1,5 @@
-use crate::components::{debug_pane::DebugPane, file_explorer::FileExplorer};
+use crate::components::debugger::container::DebugPane;
+use crate::components::file_explorer::FileExplorer;
 use stylist::yew::styled_component;
 use yew::prelude::*;
 

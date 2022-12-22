@@ -6,7 +6,7 @@ use yew::prelude::*;
 use crate::agent::worker::MipsyWebWorker;
 use crate::editor::files::{FileList, FileListAction};
 
-#[styled_component(RunButton)]
+#[styled_component(StartButton)]
 pub fn render() -> Html {
     let bridge =
         use_context::<WorkerBridge<MipsyWebWorker>>().expect("context should exist at app root");

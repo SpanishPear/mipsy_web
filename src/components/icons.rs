@@ -69,7 +69,7 @@ pub(crate) fn run_icon_outline() -> Html {
 #[styled_component(StepBackIcon)]
 pub(crate) fn step_back_icon() -> Html {
     html! {
-        <svg style="width: 1.6rem" viewBox="0 0 16 16" version="1.1">
+        <svg style="width: 1.6rem" viewBox="0 0 16 16" version="1.1" fill="currentColor">
           <rect width="16" height="16" id="icon-bound" fill="none" />
           <path d="M2,15h2V1H2V15z M14.4,2.4L13,1L6,8l7,7l1.4-1.4L8.8,8L14.4,2.4z" />
         </svg>
@@ -79,7 +79,7 @@ pub(crate) fn step_back_icon() -> Html {
 #[styled_component(StepForwardIcon)]
 pub(crate) fn step_forward_icon() -> Html {
     html! {
-        <svg viewBox="0 0 36 36" version="1.1"  preserveAspectRatio="xMidYMid meet">
+        <svg viewBox="0 0 36 36" version="1.1" fill="currentColor">
             <path d="M7.08,6.52a1.68,1.68,0,0,0,0,2.4L16.51,18,7.12,27.08a1.7,1.7,0,0,0,2.36,2.44h0L21.4,18,9.48,6.47A1.69,1.69,0,0,0,7.08,6.52Z" class="clr-i-outline clr-i-outline-path-1"></path><path d="M26.49,5a1.7,1.7,0,0,0-1.7,1.7V29.3a1.7,1.7,0,0,0,3.4,0V6.7A1.7,1.7,0,0,0,26.49,5Z" class="clr-i-outline clr-i-outline-path-2"></path>
             <rect x="0" y="0" width="36" height="36" fill-opacity="0"/>
         </svg>

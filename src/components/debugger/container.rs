@@ -1,5 +1,5 @@
 use crate::components::icons::{
-    IconButton, ResetIcon, RunIconOutline, StepForwardIcon, StopIconOutline,
+    CompileCodeIcon, IconButton, ResetIcon, RunIconOutline, StepForwardIcon, StopIconOutline,
 };
 use crate::components::{debugger::start_button::StartButton, icons::StepBackIcon};
 use stylist::yew::styled_component;
@@ -23,31 +23,37 @@ pub fn render() -> Html {
                     { "Debugger" }
                 </div>
             </div>
+
             <div class={css!(r#"
                 display: flex;
                 flex-direction: column;
                 align-items: center;
                 justify-content: center;
             "#)}>
-            <IconButton>
-                <RunIconOutline />
-            </IconButton>
 
-            <IconButton >
-                <StepBackIcon />
-            </IconButton>
+                <IconButton title="compile">
+                    <CompileCodeIcon />
+                </IconButton>
 
-            <IconButton>
-                <StepForwardIcon />
-            </IconButton>
+                <IconButton title="compile and run">
+                    <RunIconOutline />
+                </IconButton>
 
-            <IconButton>
-                <StopIconOutline/>
-            </IconButton>
+                <IconButton title="step back">
+                    <StepBackIcon />
+                </IconButton>
 
-            <IconButton>
-                <ResetIcon />
-            </IconButton>
+                <IconButton title="step forward">
+                    <StepForwardIcon />
+                </IconButton>
+
+                <IconButton title="stop">
+                    <StopIconOutline/>
+                </IconButton>
+
+                <IconButton title="reset">
+                    <ResetIcon />
+                </IconButton>
 
             </div>
         </div>

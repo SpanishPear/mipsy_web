@@ -6,6 +6,7 @@ pub struct IconButtonProps {
     pub onclick: Option<Callback<MouseEvent>>,
     pub class: Option<Classes>,
     pub children: Children,
+    pub title: String,
 }
 
 #[styled_component(IconButton)]
@@ -20,7 +21,7 @@ pub(crate) fn icon_button(props: &IconButtonProps) -> Html {
                 cursor: pointer;
                 color: white;
             }
-        "#), props.class.clone())} onclick={props.onclick.clone()}>
+        "#), props.class.clone())} onclick={props.onclick.clone()} title={props.title.clone()}>
             { for props.children.iter() }
         </button>
     }
@@ -80,8 +81,26 @@ pub(crate) fn step_back_icon() -> Html {
 pub(crate) fn step_forward_icon() -> Html {
     html! {
         <svg viewBox="0 0 36 36" version="1.1" fill="currentColor">
-            <path d="M7.08,6.52a1.68,1.68,0,0,0,0,2.4L16.51,18,7.12,27.08a1.7,1.7,0,0,0,2.36,2.44h0L21.4,18,9.48,6.47A1.69,1.69,0,0,0,7.08,6.52Z" class="clr-i-outline clr-i-outline-path-1"></path><path d="M26.49,5a1.7,1.7,0,0,0-1.7,1.7V29.3a1.7,1.7,0,0,0,3.4,0V6.7A1.7,1.7,0,0,0,26.49,5Z" class="clr-i-outline clr-i-outline-path-2"></path>
+            <path d="M7.08,6.52a1.68,1.68,0,0,0,0,2.4L16.51,18,7.12,27.08a1.7,1.7,0,0,0,2.36,2.44h0L21.4,18,9.48,6.47A1.69,1.69,0,0,0,7.08,6.52Z"
+            class="clr-i-outline clr-i-outline-path-1"></path>
+            <path d="M26.49,5a1.7,1.7,0,0,0-1.7,1.7V29.3a1.7,1.7,0,0,0,3.4,0V6.7A1.7,1.7,0,0,0,26.49,5Z" class="clr-i-outline clr-i-outline-path-2"></path>
             <rect x="0" y="0" width="36" height="36" fill-opacity="0"/>
+        </svg>
+    }
+}
+
+#[styled_component(CompileCodeIcon)]
+pub(crate) fn compile_icon() -> Html {
+    html! {
+        <svg version="1.1" id="Icons" x="0px" y="0px"
+           viewBox="0 0 32 32" fill="currentColor">
+            <path class="st0" d="M28.6,13c-1.6,0.2-3.1-0.5-4-2c-0.8-1.4-0.7-3.2,0.3-4.4c-1.5-1.4-3.3-2.4-5.2-3C19.1,5,17.7,6,16,6
+              s-3.1-1-3.7-2.5c-2,0.6-3.8,1.6-5.2,3C8,7.8,8.2,9.6,7.3,11c-0.8,1.4-2.4,2.2-4,2c-0.2,1-0.4,2-0.4,3c0,1,0.1,2.1,0.4,3
+              c1.6-0.2,3.1,0.5,4,2c0.8,1.4,0.7,3.2-0.3,4.4c1.5,1.4,3.3,2.4,5.2,3c0.6-1.4,2-2.5,3.7-2.5s3.1,1,3.7,2.5c2-0.6,3.8-1.6,5.2-3
+              c-0.9-1.2-1.1-3-0.3-4.4c0.8-1.4,2.4-2.2,4-2c0.2-1,0.4-2,0.4-3C29,15,28.9,13.9,28.6,13z"/>
+            <polyline class="st0" points="11,13 8,16 11,19 "/>
+            <polyline class="st0" points="21,13 24,16 21,19 "/>
+            <line class="st0" x1="18" y1="12" x2="14" y2="20"/>
         </svg>
     }
 }

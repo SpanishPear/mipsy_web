@@ -33,7 +33,6 @@ pub fn tab(
     let select_onclick = {
         let uri = uri.clone();
         let files = files.clone();
-        let editor_link = editor_link.clone();
         Callback::from(move |_: MouseEvent| {
             files.dispatch(FileListAction::SetViewState(editor_link.clone()));
             files.dispatch(FileListAction::SetSelected(uri.clone()));

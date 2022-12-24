@@ -4,6 +4,7 @@ pub mod decompiled_container;
 pub mod file_explorer;
 pub mod icons;
 pub mod layout;
+pub mod runtime;
 pub mod secondary_panel;
 pub mod sidebar;
 pub mod tab;

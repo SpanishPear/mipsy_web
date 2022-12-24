@@ -52,17 +52,6 @@ pub fn editor_container() -> Html {
     }
 }
 
-#[styled_component(RuntimeContainer)]
-pub fn runtime_container() -> Html {
-    html! {
-        <div class={css!(r#"
-            background-color: green;
-        "#)}>
-            {"runtime"}
-        </div>
-    }
-}
-
 #[styled_component(DataContainer)]
 pub fn data() -> Html {
     html! {

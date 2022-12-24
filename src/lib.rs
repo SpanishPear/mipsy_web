@@ -34,7 +34,27 @@ pub struct SplitContainer {
 
 /// setup the initial splits and return the handle
 pub fn setup_splits() -> JsValue {
-    // Initialize split panes
+    let split_elements = SplitElements(vec!["#runtime_top", "#runtime_bottom"]);
+    let split_options = js_sys::Object::new();
+    Reflect::set(
+        &split_options,
+        &JsValue::from("sizes"),
+        &(js_sys::Array::of2(&JsValue::from(50_f64), &JsValue::from(50_f64))),
+    )
+    .expect("failed to set runtime splits");
+
+    Reflect::set(
+        &split_options,
+        &JsValue::from("direction"),
+        &JsValue::from("vertical"),
+    )
+    .expect("failed to set runtime splits direction");
+
+    log::debug!("split_elements: {:?}", split_options);
+
+    Split(split_elements.into(), split_options);
+
+    // Initialize split columns
     let split_elements = SplitElements(vec!["#left", "#middle", "#right"]);
 
     // set the options

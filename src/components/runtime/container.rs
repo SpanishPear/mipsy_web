@@ -1,23 +1,20 @@
 use stylist::yew::styled_component;
 use yew::prelude::*;
 
-#[derive(Properties, PartialEq)]
-pub struct ResizableLayoutProps {
+#[derive(Clone, PartialEq, Properties)]
+pub struct RuntimeContainerProps {
     pub children: Children,
 }
 
-#[styled_component(ThreeColResizable)]
-pub fn resizable_layout(props: &ResizableLayoutProps) -> Html {
+#[styled_component(RuntimeContainer)]
+pub fn resizable_layout(props: &RuntimeContainerProps) -> Html {
     html! {
         <div class={css!(r#"
             height: 100%;
             width: 100%;
-            padding: 30px;
             display: grid;
         "#)}>
             <div class={css!(r#"
-                display: flex;
-                flex-direction: row;
                 max-width: 98vw;
             "#)}>
                 { for props.children.iter().enumerate().map(|(index, item)| {
@@ -26,23 +23,16 @@ pub fn resizable_layout(props: &ResizableLayoutProps) -> Html {
                             html!{
                             <div class={css!(r#"
                                border: 1px solid black;
-                           "#)} id="left">
+                           "#)} id="runtime_top">
                                {item}
                            </div>
                             }
                         }
                         1 => {
                             html! {
-                               <div id="middle">
-                                   {item}
-                               </div>
-                            }
-                        }
-                        2 => {
-                            html! {
                                <div  class={css!(r#"
-                                   min-width: 100px;
-                               "#)} id="right">
+                                   border: 1px solid black;
+                               "#)} id="runtime_bottom">
                                    {item}
                                </div>
                             }

@@ -2,11 +2,12 @@ use crate::{
     agent::{worker::MipsyWebWorker, FromWorker},
     components::{
         decompiled_container::DecompiledContainer,
-        layout::{containers::RuntimeContainer, ThreeTabSwitcher},
+        layout::ThreeTabSwitcher,
         layout::{
             containers::{AppContainer, DataContainer, EditorContainer, MenuContainer},
             ThreeColResizable,
         },
+        runtime::container::RuntimeContainer,
     },
     editor::files::{FileList, FileListAction},
     setup_splits,
@@ -88,7 +89,10 @@ pub fn app() -> Html {
                             <DataContainer />
                         }}}
                     />
-                    <RuntimeContainer />
+                    <RuntimeContainer>
+                        <div>{"top"}</div>
+                        <div>{"bottom"}</div>
+                    </RuntimeContainer>
             </ThreeColResizable>
         </AppContainer>
         </ContextProvider<WorkerBridge<MipsyWebWorker>>>

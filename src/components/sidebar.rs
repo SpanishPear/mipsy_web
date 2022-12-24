@@ -30,6 +30,7 @@ pub fn render() -> Html {
         <div class={css!(r#"
             display: flex;
             height: 100%;
+            justify-content: center;
         "#)}>
             // icon list of panels
             <div class={css!(r#"

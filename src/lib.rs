@@ -90,7 +90,7 @@ pub fn toggle_secondary_pane(split_handle: &JsValue, showing: UseStateHandle<boo
         .unwrap();
 
     let values = if !*showing {
-        js_sys::Array::of3(&JsValue::from(15), &JsValue::from(40), &JsValue::from(45))
+        js_sys::Array::of3(&JsValue::from(10), &JsValue::from(45), &JsValue::from(45))
     } else {
         js_sys::Array::of3(&JsValue::from(5), &JsValue::from(50), &JsValue::from(45))
     };

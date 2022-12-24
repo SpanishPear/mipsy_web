@@ -44,9 +44,9 @@ pub fn setup_splits() -> JsValue {
         &options,
         &JsValue::from("sizes"),
         &(js_sys::Array::of3(
-            &JsValue::from(3_f64),
-            &JsValue::from(47_f64),
+            &JsValue::from(5_f64),
             &JsValue::from(50_f64),
+            &JsValue::from(45_f64),
         )),
     )
     .expect("Creating options via reflection failed");
@@ -70,9 +70,9 @@ pub fn toggle_secondary_pane(split_handle: &JsValue, showing: UseStateHandle<boo
         .unwrap();
 
     let values = if !*showing {
-        js_sys::Array::of3(&JsValue::from(10), &JsValue::from(40), &JsValue::from(50))
+        js_sys::Array::of3(&JsValue::from(15), &JsValue::from(40), &JsValue::from(45))
     } else {
-        js_sys::Array::of3(&JsValue::from(3), &JsValue::from(47), &JsValue::from(50))
+        js_sys::Array::of3(&JsValue::from(5), &JsValue::from(50), &JsValue::from(45))
     };
 
     // flip the state determining if panel is showing

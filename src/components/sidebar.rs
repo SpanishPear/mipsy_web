@@ -34,6 +34,9 @@ pub fn render() -> Html {
             // icon list of panels
             <div class={css!(r#"
                 padding: 10px;
+                display: flex;
+                align-items: center;
+                flex-direction: column;
             "#)}>
                 {
                     for PanelType::iter().map(|panel_type| {
@@ -79,8 +82,8 @@ fn icon_renderer(props: &IconProps) -> Html {
     match props.panel {
         PanelType::FileExplorer => html! {
             <svg viewBox="0 0 20 20" fill="currentColor" class={css!(r#"
-                width: 2.0rem;
-                height: 2.0rem;
+                width: 2.3rem;
+                height: 2.3rem;
             "#)} >
               <path
                 stroke-width="3%"
@@ -100,8 +103,8 @@ fn icon_renderer(props: &IconProps) -> Html {
                 width="24px" height="24px" viewBox="0 0 24 24"
                 fill="currentColor"
                 class={css!(r#"
-                    width: 2.0rem;
-                    height: 2.0rem;
+                    width: 2.3rem;
+                    height: 2.3rem;
                 "#)}
             >
                 <path

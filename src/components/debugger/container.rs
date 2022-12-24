@@ -1,12 +1,19 @@
+use crate::agent::worker::MipsyWebWorker;
+use crate::components::icons::StepBackIcon;
 use crate::components::icons::{
     CompileCodeIcon, IconButton, ResetIcon, RunIconOutline, StepForwardIcon, StopIconOutline,
 };
-use crate::components::{debugger::start_button::StartButton, icons::StepBackIcon};
+use crate::editor::files::{FileList, FileListAction};
+use bounce::use_slice_dispatch;
+use gloo_worker::WorkerBridge;
 use stylist::yew::styled_component;
 use yew::prelude::*;
 
 #[styled_component(DebugPane)]
 pub fn render() -> Html {
+    let bridge = use_context::<WorkerBridge<MipsyWebWorker>>().expect("context should exist");
+    let dispatch = use_slice_dispatch::<FileList>();
+
     html! {
         <div>
             // file explorer header container
@@ -31,7 +38,9 @@ pub fn render() -> Html {
                 justify-content: center;
             "#)}>
 
-                <IconButton title="compile">
+                <IconButton title="compile" onclick={Callback::from(move |_| {
+                    dispatch(FileListAction::SendCompileCode(bridge.clone()));
+                })}>
                     <CompileCodeIcon />
                 </IconButton>
 

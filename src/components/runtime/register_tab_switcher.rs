@@ -2,13 +2,8 @@ use stylist::yew::styled_component;
 use stylist::Style;
 use yew::prelude::*;
 
-#[derive(Properties, PartialEq, Debug, Clone)]
-pub struct RegisterTabSwitcherProps {
-    pub children: Children,
-}
-
 #[styled_component(RegisterTabSwitcher)]
-pub fn three_tab_switcher(props: &RegisterTabSwitcherProps) -> Html {
+pub fn three_tab_switcher() -> Html {
     let displayed = use_state(|| 0);
 
     let click_callback = |index| {
@@ -60,7 +55,17 @@ pub fn three_tab_switcher(props: &RegisterTabSwitcherProps) -> Html {
                 height: 94%;
                 width: 100%;
             "#)}>
-                {props.children.iter().nth(*displayed).clone()}
+                {
+                    if *displayed == 1 {
+                        html! {
+                             <div>{"all registers"}</div>
+                        }
+                    } else {
+                        html! {
+                             <div>{"used registers"}</div>
+                        }
+                    }
+                }
             </div>
             <div id="three-tab-switcher__buttons" class={css!(r#"
                 display: flex;

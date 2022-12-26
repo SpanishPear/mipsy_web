@@ -89,10 +89,7 @@ pub fn app() -> Html {
 
                     // Right column, registers, stdout, etc
                     <RuntimeContainer>
-                        <RegisterTabSwitcher>
-                            <div>{"used registers"}</div>
-                            <div>{"all regs"}</div>
-                        </RegisterTabSwitcher>
+                        <RegisterTabSwitcher />
                         <div>{"bottom"}</div>
                     </RuntimeContainer>
 

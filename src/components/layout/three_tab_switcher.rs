@@ -1,31 +1,18 @@
 use std::ops::Deref;
 
+use crate::state::app::State;
 use bounce::use_slice_value;
 use stylist::yew::styled_component;
 use stylist::Style;
 use yew::prelude::*;
-use yew::virtual_dom::VChild;
-
-use crate::components::decompiled_container::DecompiledContainer;
-use crate::state::app::State;
-
-use super::containers::{DataContainer, EditorContainer};
 
 #[derive(Properties, PartialEq, Debug, Clone)]
 pub struct ThreeTabSwitcherProps {
-    pub editor_container: VChild<EditorContainer>,
-    pub decompiled_container: VChild<DecompiledContainer>,
-    pub data_container: VChild<DataContainer>,
+    pub children: Children,
 }
 
 #[styled_component(ThreeTabSwitcher)]
-pub fn three_tab_switcher(
-    ThreeTabSwitcherProps {
-        editor_container,
-        decompiled_container,
-        data_container,
-    }: &ThreeTabSwitcherProps,
-) -> Html {
+pub fn three_tab_switcher(props: &ThreeTabSwitcherProps) -> Html {
     // a container with three possible display options
     // editor, decompiled, data
     // there should be three tab buttons at the buttom
@@ -106,12 +93,7 @@ pub fn three_tab_switcher(
                 height: 90%;
                 width: 100%;
             "#)}>
-                {match *displayed {
-                    0 => html!{{editor_container.clone()}},
-                    1 => html!{{decompiled_container.clone()}},
-                    2 => html!{{data_container.clone()}},
-                    _ => unreachable!("invalid index"),
-                }}
+                {props.children.iter().nth(*displayed).clone()}
             </div>
             <div id="three-tab-switcher__buttons" class={css!(r#"
                 display: flex;

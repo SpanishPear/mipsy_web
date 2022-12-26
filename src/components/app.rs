@@ -77,18 +77,17 @@ pub fn app() -> Html {
         <ContextProvider<WorkerBridge<MipsyWebWorker>> context={(*bridge).clone()}>
         <AppContainer>
             <ThreeColResizable>
+                    // Left column, with the sidebar and seconary panel
                     <MenuContainer />
-                    <ThreeTabSwitcher
-                        editor_container={{ html_nested!{
-                            <EditorContainer />
-                        }}}
-                        decompiled_container={{ html_nested!{
-                            <DecompiledContainer />
-                        }}}
-                        data_container={{ html_nested!{
-                            <DataContainer />
-                        }}}
-                    />
+
+                    // Middle column: editor, decompiled, data
+                    <ThreeTabSwitcher>
+                        <EditorContainer />
+                        <DecompiledContainer />
+                        <DataContainer />
+                    </ThreeTabSwitcher>
+
+                    // Right column, registers, stdout, etc
                     <RuntimeContainer>
                         <RegisterTabSwitcher>
                             <div>{"used registers"}</div>
@@ -96,7 +95,8 @@ pub fn app() -> Html {
                         </RegisterTabSwitcher>
                         <div>{"bottom"}</div>
                     </RuntimeContainer>
-            </ThreeColResizable>
+
+            </ ThreeColResizable>
         </AppContainer>
         </ContextProvider<WorkerBridge<MipsyWebWorker>>>
     }

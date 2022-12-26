@@ -91,9 +91,11 @@ dependencies = [
  "anymap2",
  "bounce-macros",
  "futures",
+ "gloo 0.8.0",
  "once_cell",
  "serde",
  "wasm-bindgen",
+ "web-sys",
  "yew 0.20.0",
 ]
 
@@ -999,6 +1001,7 @@ dependencies = [
  "anyhow",
  "bounce",
  "gloo 0.8.0",
+ "gloo-net",
  "gloo-utils",
  "gloo-worker",
  "indexed_db_futures",

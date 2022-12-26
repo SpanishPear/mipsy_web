@@ -20,7 +20,10 @@ use crate::{
     },
     SplitContainer,
 };
-use bounce::{use_atom, use_atom_setter, use_slice, use_slice_dispatch, BounceRoot};
+use bounce::{
+    helmet::{Helmet, HelmetBridge},
+    use_atom, use_atom_setter, use_slice, use_slice_dispatch, BounceRoot,
+};
 use gloo_worker::{Spawnable, WorkerBridge};
 use stylist::yew::styled_component;
 use yew::prelude::*;
@@ -73,7 +76,8 @@ pub fn app() -> Html {
                     _ => {}
                 }
             })
-            .spawn("/worker.js")
+            .spawn("http://127.0.0.1:9999/worker.js")
+        //.spawn("/worker.js")
     });
 
     html! {
@@ -106,6 +110,11 @@ pub fn app() -> Html {
 pub fn app() -> Html {
     html! {
         <BounceRoot>
+            <HelmetBridge />
+            <Helmet>
+                <script src="https://unpkg.com/split.js/dist/split.min.js"></script>
+                <title>{"yeet"}</title>
+            </Helmet>
             <App />
         </BounceRoot>
     }

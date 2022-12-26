@@ -13,7 +13,7 @@ use yew::UseStateHandle;
 //TODO: create a SplitJs rust binding
 #[wasm_bindgen]
 extern "C" {
-    /// Documentation at https://github.com/nathancahill/split/tree/master/packages/splitjs
+    /// Documentation at https://github.como/nathancahill/split/tree/master/packages/splitjs
     pub fn Split(elements: js_sys::Array, options: js_sys::Object) -> JsValue;
 }
 

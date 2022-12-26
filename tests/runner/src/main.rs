@@ -22,7 +22,7 @@ async fn main() {
         )
         .map(|m| with_header(m, "cross-origin-resource-policy", "cross-origin"));
 
-    println!("Test server is running at: http://127.0.0.1:9999/");
+    println!("Test server: is running at: http://127.0.0.1:9999/");
 
     warp::serve(route).run(([127, 0, 0, 1], 9999)).await;
 }

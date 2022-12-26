@@ -14,7 +14,7 @@ wasm-bindgen = "0.2.83"
 web-sys = { version = "0.3.60", features = ["File", "DragEvent", "DataTransfer"] }
 wasm-bindgen-test = "0.3.33"
 monaco = { git = "https://github.com/siku2/rust-monaco", features = ["yew-components"] }
-bounce = "0.5.0"
+bounce = { version = "0.5.0", features = ["helmet"] }
 log = "0.4.17"
 gloo-worker = { version = "0.2.1", features = ["futures"] }
 wasm-bindgen-futures = "0.4.33"
@@ -29,12 +29,6 @@ mipsy_utils = { git = "https://github.com/spanishpear/mipsy"  }
 mipsy_lib = { git = "https://github.com/spanishpear/mipsy" }
 mipsy_parser = { git = "https://github.com/spanishpear/mipsy" }
 mipsy_instructions = { git = "https://github.com/spanishpear/mipsy"  , features = ["rt_yaml"] } 
-
-[[bin]]
-name = "test_server"
-path = "src/bin/test_server.rs"
-test = false
-bench = false
 
 [[bin]]
 name = "app"
@@ -52,3 +46,4 @@ warp = "0.3"
 
 [dev-dependencies]
 gloo-utils = "0.1.6"
+gloo-net = "0.2.5"

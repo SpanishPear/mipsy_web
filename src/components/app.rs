@@ -7,7 +7,10 @@ use crate::{
             containers::{AppContainer, DataContainer, EditorContainer, MenuContainer},
             ThreeColResizable,
         },
-        runtime::{container::RuntimeContainer, register_tab_switcher::RegisterTabSwitcher},
+        runtime::{
+            container::RuntimeContainer, output_tab_switcher::OutputTabSwitcher,
+            register_tab_switcher::RegisterTabSwitcher,
+        },
     },
     editor::files::{FileList, FileListAction},
     setup_splits,
@@ -90,7 +93,7 @@ pub fn app() -> Html {
                     // Right column, registers, stdout, etc
                     <RuntimeContainer>
                         <RegisterTabSwitcher />
-                        <div>{"bottom"}</div>
+                        <OutputTabSwitcher />
                     </RuntimeContainer>
 
             </ ThreeColResizable>

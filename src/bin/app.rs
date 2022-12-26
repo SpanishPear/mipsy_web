@@ -1,24 +1,9 @@
 // due to a bug in stylist
-#![allow(clippy::let_unit_value)]
-
-use bounce::BounceRoot;
-
-use mipsy_web::components::app::App;
-use stylist::yew::*;
+use mipsy_web::components::app::AppRoot;
 use tracing_subscriber::fmt::format::Pretty;
 use tracing_subscriber::fmt::time::UtcTime;
 use tracing_subscriber::prelude::*;
 use tracing_web::{performance_layer, MakeConsoleWriter};
-use yew::prelude::*;
-
-#[styled_component(AppRoot)]
-fn app() -> Html {
-    html! {
-        <BounceRoot>
-            <App />
-        </BounceRoot>
-    }
-}
 
 fn main() {
     // if debug, use wasm_logger (it contains line numbers)

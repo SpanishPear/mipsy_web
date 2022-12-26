@@ -7,10 +7,11 @@
 
     <!-- our wasm files -->
     <link data-trunk rel="rust" href="Cargo.toml" data-bin="app" data-type="main" />
-    <link data-trunk rel="rust" href="Cargo.toml" data-bin="worker" data-type="worker" />
+    <link data-trunk data-loader-shim rel="rust" href="Cargo.toml" data-bin="worker" data-type="worker" />
 
     <!-- split.js for the drag and drop areas -->
     <link data-trunk rel="inline" type="js" href="assets/split.js"/>
+    <script src="https://unpkg.com/split.js/dist/split.min.js"></script>
 
     <link data-trunk rel="copy-file" href="assets/codicon.ttf" />
 

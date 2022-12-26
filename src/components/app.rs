@@ -20,7 +20,7 @@ use crate::{
     },
     SplitContainer,
 };
-use bounce::{use_atom, use_atom_setter, use_slice, use_slice_dispatch};
+use bounce::{use_atom, use_atom_setter, use_slice, use_slice_dispatch, BounceRoot};
 use gloo_worker::{Spawnable, WorkerBridge};
 use stylist::yew::styled_component;
 use yew::prelude::*;
@@ -99,5 +99,14 @@ pub fn app() -> Html {
             </ ThreeColResizable>
         </AppContainer>
         </ContextProvider<WorkerBridge<MipsyWebWorker>>>
+    }
+}
+
+#[styled_component(AppRoot)]
+pub fn app() -> Html {
+    html! {
+        <BounceRoot>
+            <App />
+        </BounceRoot>
     }
 }

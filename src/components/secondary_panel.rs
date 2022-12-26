@@ -20,7 +20,10 @@ impl PanelType {
         }
     }
     pub fn id(&self) -> String {
-        self.title().to_lowercase()
+        match self {
+            PanelType::FileExplorer => "file-explorer".to_string(),
+            PanelType::Debug => "debug".to_string(),
+        }
     }
 }
 

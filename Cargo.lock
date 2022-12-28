@@ -91,11 +91,9 @@ dependencies = [
  "anymap2",
  "bounce-macros",
  "futures",
- "gloo 0.8.0",
  "once_cell",
  "serde",
  "wasm-bindgen",
- "web-sys",
  "yew 0.20.0",
 ]
 

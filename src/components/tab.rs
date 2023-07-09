@@ -34,6 +34,7 @@ pub fn tab(
         let uri = uri.clone();
         let files = files.clone();
         Callback::from(move |_: MouseEvent| {
+            log::info!("tab select onclick");
             files.dispatch(FileListAction::SetViewState(editor_link.clone()));
             files.dispatch(FileListAction::SetSelected(uri.clone()));
             files.dispatch(FileListAction::RestoreViewState(
@@ -44,14 +45,23 @@ pub fn tab(
     };
 
     let close_onclick = {
+        // clone so we can hold onto it in the callback
         let uri = uri.clone();
-        Callback::from(move |_: MouseEvent| {
+        // deref here just to make a copy
+        let is_selected = *is_selected;
+        Callback::from(move |e: MouseEvent| {
+            e.stop_propagation();
+
+            // can't delete the last file!
             if files.files.len() == 1 {
                 return;
             }
 
-            if let Some(next) = files.get_next_tab() {
-                files.dispatch(FileListAction::SetSelected(next));
+            // if current file is selected, select next file
+            if is_selected {
+                if let Some(next) = files.get_next_tab() {
+                    files.dispatch(FileListAction::SetSelected(next));
+                }
             }
 
             // remove from files_list, and the monaco editor

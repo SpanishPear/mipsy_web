@@ -5,9 +5,8 @@ edition = "2021"
 
 [dependencies]
 yew = { version = "0.20", features = ["csr"] }
-yew-agent = "0.1.0"
 serde = { version = "1.0", features = ["derive"] }
-stylist = { version = "0.11", features = ["yew_integration", "parser"] }
+stylist = { version = "0.12.1", features = ["yew_integration", "parser"] }
 indexed_db_futures = "0.2.3"
 anyhow = "1.0.65"
 wasm-bindgen = "0.2.83"

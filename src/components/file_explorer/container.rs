@@ -95,6 +95,7 @@ fn from(
     let onclick = {
         let uri = uri.clone();
         Callback::from(move |_: MouseEvent| {
+            log::info!("FileName onclick");
             files.dispatch(FileListAction::SetViewState(editor_link.clone()));
             files.dispatch(FileListAction::SetSelected(uri.clone()));
             files.dispatch(FileListAction::RestoreViewState(

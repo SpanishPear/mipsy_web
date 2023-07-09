@@ -112,6 +112,7 @@ fn from(
                 padding: 0.5rem;
                 cursor: pointer;
                 transition: background-color 0.2s ease-in-out;
+                min-width: 0;
                 &:hover {
                     background-color: rgba(0, 0, 0, 0.1);
                 }
@@ -119,7 +120,16 @@ fn from(
                     background-color: rgba(0, 0, 0, 0.1);
                 }
             "#)}>
-            {name}
+
+            <p class={css!(r#"
+                overflow: hidden;
+                text-overflow: ellipsis;
+                white-space: nowrap;
+                min-width: 0;
+                flex: 1;
+            "#)}>
+                {name}
+            </p>
         </div>
     }
 }

@@ -13,12 +13,11 @@ use crate::{
         },
     },
     editor::files::{FileList, FileListAction},
-    setup_splits,
     state::{
         app::{State, StateAction},
         breakpoints::Breakpoints,
     },
-    SplitContainer,
+    bindings::split::{setup_splits, SplitContainer},
 };
 use bounce::{use_atom, use_atom_setter, use_slice, use_slice_dispatch};
 use gloo_worker::{Spawnable, WorkerBridge};

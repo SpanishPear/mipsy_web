@@ -1,6 +1,6 @@
 use crate::{
     components::secondary_panel::{PanelType, SecondaryPanel},
-    toggle_secondary_pane, SplitContainer,
+    bindings::split::toggle_secondary_pane, bindings::split::SplitContainer,
 };
 use bounce::use_atom;
 use stylist::yew::styled_component;
@@ -35,6 +35,7 @@ pub fn render() -> Html {
             // icon list of panels
             <div class={css!(r#"
                 padding: 10px;
+                min-width: 60px;
                 display: flex;
                 align-items: center;
                 flex-direction: column;
